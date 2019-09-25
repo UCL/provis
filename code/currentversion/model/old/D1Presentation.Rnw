@@ -1,0 +1,476 @@
+\documentclass{beamer}
+\usepackage{graphicx}
+\usepackage{mathpazo}
+\usepackage{hyperref}
+\usepackage{multimedia}
+\usetheme{Madrid}
+\usecolortheme{crane}
+\usepackage{mathpazo}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{multimedia}
+\usepackage{amsmath}
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{multirow}
+\usepackage{dcolumn}
+\usepackage{epstopdf}
+
+\setbeamertemplate{section page}
+{
+  \begin{centering}
+  \begin{beamercolorbox}[sep=12pt,center]{part title}
+  \usebeamerfont{section title}\insertsection\par
+  \end{beamercolorbox}
+  \end{centering}
+}
+
+<<LIB,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
+  library(knitr)
+opts_chunk$set(concordance=TRUE, 
+               echo=FALSE,
+               tidy=FALSE,
+               autodep=TRUE,
+               cache=TRUE, 
+               message=FALSE, 
+               warning=FALSE,
+               cache.path='cache/cache2',
+               size='scriptsize',
+               results='hide',
+               comment=NA, 
+               fig.width=4,
+               fig.height=4, 
+               out.width='.5\\textwidth',
+               fig.show='hold')
+
+# Set RootDir
+if (!exists("RootDir") ) {
+  host<-system("hostname",intern=TRUE)
+  if (host=="dh-230-mac.econ.ucl.ac.uk") {
+    RootDir<-"/Users/uctpln0/Documents/research/hedonic/NIC"
+  } else if (host=="minelava") {
+    RootDir<-"C:/a/research/hedonic/NIC"
+  } else if (host=="jake.local" | host=="vic.local") {
+    RootDir<-"/home/uctpln0/hedonic/NIC"
+  } else if (host=="MateuszsMacBook") {
+    RootDir<-"/Users/mateuszmysliwski/Dropbox/NICProject"
+  } else {
+    info_sys<-Sys.info()
+    user<-info_sys["user"]
+    if (user=="uctpln0") {
+      RootDir<-"/home/uctpln0/hedonic/NIC"
+    } else {
+      RootDir<-"/Users/larsnesheim/Documents/research/hedonic/NIC"
+    }
+  }
+}
+
+source(paste0(RootDir,"/code/model/B1LoadLibrary.R"))
+source(paste0(RootDir,"/code/model/B2SetPath.R"))
+@
+  
+<<DATA,cache=TRUE>>=
+region_id<-3
+dirs<-B2SetPath(RootDir,region_id)
+                
+DestinationFile <- paste0(dirs$datadir,"/destinations",region_id,".csv")
+
+dest  <- read.csv(DestinationFile)  
+dest  <- dest[dest$shortlist,]
+ndest <- nrow(dest)
+dest_name  <- strsplit(as.character(dest$name),",")
+dest_name  <- matrix(unlist(dest_name),2,nrow(dest))[1,]
+
+# load region shape file
+wgs.84          <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
+ukgrid = "+init=epsg:27700"
+regionshapefile <- "Regions_December_2015_Generalised_Clipped_Boundaries_in_England"
+regions         <- readOGR(dirs$mapdir,layer=regionshapefile)
+regions         <- spTransform(regions,CRS(wgs.84))
+
+
+# 1) Create counterfactual settlement
+# 2) Compute new travel times
+# 3) Compute new prices
+load(paste0(dirs$datadir,"/m2data2.RData"))
+
+
+# Load results from models 1 and 2  
+load(paste0(dirs$outdir,"/m2ols0.RData"))
+
+@
+
+<<DATA_SUMSTATS,results='asis',fig.pos="H">>=
+title<-"East Midlands: summary statistics"
+stargazer(m2data[,c("pricepaid","total_floor_area")],title=title,
+          align=TRUE,digits=2)
+@
+
+\title[NIC meeting]{Land Value Uplift Tool}
+\author[Nesheim (CeMMAP)]{Lars Nesheim \\ Centre for Microdata Methods and Practice \\ IFS}
+\date{January 12, 2018}
+
+\begin{document}
+
+\frame{\titlepage}
+
+\section{Introduction}
+
+\begin{frame}
+\frametitle{Introduction}
+\begin{itemize}
+\item We were commissioned by the NIC to create a software tool to estimate Land Value Uplift resulting from various infrastructure investments.
+\item Outputs of the project, consist of three main components:
+  \begin{enumerate}
+\item a \textbf{database}.
+\item a report of \textbf{econometric results}.
+\item a \textbf{web application} to estimate Land Value Uplift.
+\end{enumerate}
+\end{itemize}
+\end{frame}     
+
+\begin{frame}
+\frametitle{Introduction}
+\begin{enumerate}
+\item The \textbf{database} contains information on:
+  \begin{enumerate}
+\item residential property values
+\item property characteristics
+\item geographic coordinates
+\item local infrastructure, land use, population, planning policies, travel times, and various amenities.
+\end{enumerate}
+\item The \textbf{econometric results} consist of results from several semiparametric models that predict property value as a functions of 
+\begin{enumerate}
+\item property size, type, and location
+\item travel times to various locations
+\item land use patterns and infrastructure
+\item local planning conditions 
+\item other variables.
+\end{enumerate}
+\item The \textbf{web application} allows users to predict the impact on property prices and travel times of 
+\begin{enumerate}
+\item building houses
+\item investing in roads
+\item investing in the rail network.
+\end{enumerate}
+\end{enumerate}
+\end{frame}  
+
+\begin{frame}
+\section{The Database}
+\sectionpage
+\end{frame}
+
+\begin{frame}
+\frametitle{Primary data sources}
+\begin{itemize}
+\item Land Registry prices paid data from 1993 to present.
+\item Infrastructure, planning, land use and amenities data from Ordnance Survey, Google, DCLG, Environment Agency, and the 2011Census (geographic coordinates, roads, rail networks and stations, airports, buildings, travel times, land use, greenbelt, floodzone, road noise).
+\item A second similar database of rents for commercial properties based on the Valuation Office Agency data is nearing completion.
+\item A third database of farmland prices was created from the Registered Institute of Chartered Surveyors (RICS) Farmland Market Directory.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{tiny}
+\begin{table}[h]
+\caption{Table 1A: Baseline database}
+\begin{center}
+\begin{tabular}{|llll|}
+\hline
+Type		&Variable 			& Description 			& Source \\ \hline
+Outcome	&pricepaid 			& transaction price of property 	& \multirow{5}{3.5cm}{Land Registry} \\
+Building 	&propertytype		& Detached/flat etc			& \\ 
+Building 	&newbuild 			& Is it a new build			& \\ 
+Building 	&tenure 			& Freehold/leasehold		& \\ 
+Building	&transferdate		& Date of transaction		& \\
+Location	&postcode 			& post code				& \\ \hline
+Location	&eastings 			& east coordinates			& \multirow{2}{3.5cm}{AddressBase Premium}\\
+Location	&northings 			& north coordinates 		& \\ \hline
+Building	&total\_floor\_area		& Floor space			& \multirow{6}{3.5cm}{DCLG EPC data}\\
+Building	&number\_heated\_rooms	& Number of rooms			& \\
+Building	&extension\_count		& Number of extensions		& \\
+Building	&number\_open\_fireplaces	& Number of fireplaces	& \\
+Building	&number\_heated\_rooms	& Number of rooms			& \\
+Building	&floor\_height		& Ceiling height 			& \\ \hline
+Planning	&greenbelt			& 1 if in greenbelt			& DCLG green belt stats \\
+Planning	&localplanrate 		& Planned housing increase (\%)	& DCLG collated local plans \\
+Planning 	&builtuparea\_pct 		& Built-up (BU) land (LA\%) 	& \multirow{3}{3.5cm}{DCLG land constraints}\\
+Planning 	&busyland\_pct 		& BU and protected land (LA\%) 	& \\
+Planning 	&restrictedland\_pct 	& Protected land (LA\%) 		& \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+\end{tiny}
+\end{frame}
+
+\begin{frame}
+\begin{tiny}
+\begin{table}[h]
+\caption{Table 1B: Baseline database (continued)}
+\begin{center}
+\begin{tabular}{|llll|}
+\hline
+Type		&Variable 			& Description 			& Source \\ \hline
+Amenity	&prob\_4band		& floodzone risk  			& EA planning flood zone data\\ 
+Amenity 	&noiseclass 			& Daytime traffic volume		& \multirow{2}{3.5cm}{EA road noise}\\
+Amenity 	&roadnoise 			& 1 = traffic louder than 55dB	& \\
+Amenity	& distance\_coast		& Distance to coast			& computed \\ \hline
+Travel	 	&travel times			& To various locations		& Google maps/estimates\\ 
+Travel		& distance\_station		& Distance to rail station		& computed	\\ \hline
+Landuse	& lu\_domestic\_shr		& domestic landuse			& \multirow{7}{3.5cm}{Generalized Landuse Database} \\
+Landuse	& lu\_gardens\_shr		& garden landuse			&  \\
+Landuse	& lu\_nondom\_shr		& non-domestic landuse		& \\
+Landuse	& lu\_road\_shr		& road landuse			&  \\ 
+Landuse	& lu\_rail\_shr		& rail landuse			&  \\ 
+Landuse	& lu\_greenspace\_shr	& greenspace landuse		&  \\
+Landuse	& lu\_water\_shr		& water landuse			&  \\ \hline
+Population 	& imddecile			& IMD decile				& 2011 Census \\
+Population	& popdensityOA		& Population density (OA)		& 2011 Census \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+\end{tiny}
+\end{frame}
+
+\begin{frame}
+\frametitle{Additional comments on data sources}
+\begin{itemize}
+\item Other data we have obtained but which we have not included in current analysis: 1) towns, schools, airports, rivers, roads, 
+\item Nearly all data in the database are publicly available.
+\begin{itemize}
+\item Exceptions are DCLG's EPC  data and the VOA data. The DCLG EPC data can be used by users if they accept DCLG's licensing agreement. The VOA data require license from VOA.
+\item We provide information and code to clean these restricted access data sources. 
+\end{itemize}
+\item Additional variables can be merged into database based on postcode, geographic coordinates or other geographic identifiers.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\section{The Model}
+\sectionpage
+\end{frame}
+
+\begin{frame}
+\frametitle{Model}
+\begin{itemize}
+\item Baseline model consists of two equations: 
+  \begin{enumerate}
+\item First equation captures how property values vary with property characteristics and geographic coordinates.
+\begin{itemize}
+\item We call the second component that depends on geographic coordinates the \textbf{location value}.
+\end{itemize}
+\item Second equation captures how \textbf{location value} varies with characteristics of the location such as travel time, land use, planning policies, and various amenities.
+\end{enumerate}
+\item We considered a large range of specifications and selected a model based on economic criterion and statistical fit.
+\item We estimated the model using semi-parametric methods using the R programming language.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Model: first equation}
+\begin{itemize}
+\item First equation is
+\begin{eqnarray}
+\log v_{it} &=& \alpha_t + \beta h_{it} + g \left(x_i,y_i \right) + \varepsilon_{it} \label{eq:model 1}
+\end{eqnarray}
+\item $\log v_{it}$ is the logarithm of property value for property at location $i$ at time $t$.
+\item $\alpha_t$ captures time effects.
+\item $h_{it}$ is a set of house characteristics including building type, floor area, tenure type.
+\item $\left( x_i,y_i \right) $ are the longitude and latitude of the property.
+\item $g \left(x_i,y_i \right)$ is a function whose shape is estimated. This captures the highly complex ways with which property value varies with location.
+\begin{itemize}
+\item $g \left(x_i,y_i \right)$ is the \textbf{location value}. 
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Selected parameter estimates for equation \ref{eq:model 1}}
+\begin{tiny}
+
+\begin{table}[H] 
+\caption{Dependence of log property values on structure and time} 
+\begin{tabular}{lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+& \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & logprice \\ 
+\hline \\[-1.8ex] 
+year2009 & $-$0.084$^{***}$ (0.004) \\ 
+year2010 & $-$0.042$^{***}$ (0.004) \\ 
+year2011 & $-$0.052$^{***}$ (0.004) \\ 
+year2012 & $-$0.034$^{***}$ (0.004) \\ 
+year2013 & $-$0.015$^{***}$ (0.004) \\ 
+year2014 & 0.038$^{***}$ (0.004) \\ 
+year2015 & 0.089$^{***}$ (0.004) \\ 
+year2016 & 0.150$^{***}$ (0.004) \\ 
+year2017 & 0.199$^{***}$ (0.005) \\ 
+propertytypeF & $-$0.413$^{***}$ (0.007) \\ 
+propertytypeO & $-$0.067$^{***}$ (0.019) \\ 
+propertytypeS & $-$0.260$^{***}$ (0.002) \\ 
+propertytypeT & $-$0.428$^{***}$ (0.002) \\ 
+newbuildY & 0.151$^{***}$ (0.003) \\ 
+tenureL & $-$0.109$^{***}$ (0.006)  \\
+\hline \\[-1.8ex] 
+Observations & 100,000 \\ 
+R$^{2}$ & 0.700 \\ 
+Adjusted R$^{2}$ & 0.699 \\ 
+Residual Std. Error & 0.257 (df = 99836) \\ 
+F Statistic & 1,427.308$^{***}$ (df = 163; 99836) \\ \hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} 
+\end{tabular} 
+\end{table} 
+\end{tiny}
+\end{frame}
+
+\begin{frame}
+\frametitle{East Midlands: log property value vs total floor area (sq. meters)}
+\begin{center}
+\includegraphics[scale=.45]{figures/m1_region3_total_floor_area} 
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{East Midlands: Log location value}
+\end{frame}
+\begin{frame}
+\frametitle{Model: second equation}
+\begin{itemize}
+\item Second equation is
+\begin{eqnarray}
+g \left( x_i , y_i \right) & = & \gamma z_{1i} + f\left( z_{2i} \right) + \eta_i \label{eq:model 2}
+\end{eqnarray}
+\item $z_{1i}$ is a set of location characteristics including land use, local authority plans, and amenities.
+\item $z_{2i}$ is a set of location characteristics including travel times to various locations and distance to coast. 
+\item $f \left(z_{2i} \right)$ is a function whose shape is estimated. This captures the highly complex ways that property values vary with travel times and distances to various locations. 
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Model more details}
+\begin{itemize}
+\item Estimated model separately for 11 regions: 
+  \begin{tiny}
+\begin{table}[htp]
+\begin{center}
+\begin{tabular}{| l |l |}
+\hline
+Devon and Cornwall & East of England \\ 
+East Midlands & London \\
+North East & North West \\
+South East & South West (excluding Devon and Cornwall) \\
+West Midlands & Yorkshire and the Humber \\
+Cambridge-Milton Keynes - Oxford & \\ \hline
+\end{tabular}
+\end{center}
+\end{table}%
+\end{tiny}
+
+\item Preliminary analysis showed that distance from highest property value locations in region and/or to nearby big cities is dominant factor for
+property values.
+\item Computed travel times from each property to these locations in model.
+\item Also included travel time to nearest rail station.
+\item Other important factors in model include 1) land use, 2) population density, 3) a measure of income, 4) distance to the coast, 5) local planning, 6) noise, flooding, and greenbelt.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Equation (\ref{eq:model 1}) results}
+\begin{itemize}
+\item We estimated equation (\ref{eq:model 1}) separately for each region.
+\item Below we show results for the East Midlands.
+\item Key variables property type, size, and location.
+\item Table XX displays the parameter estimates for a subset of parameters and statistics on how well the model fits the data.
+\item Figure XX shows the relationship between floor area and property value.
+\item Figure XX shows the relationship between location and property value.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Equation 1 results}
+\begin{enumerate}
+\item Parameters
+\item R2
+\item value vs. size
+\item value vs. location
+\item what is missing: 
+  \begin{enumerate}
+\item omitted property characteristics: (age of structure, lot size, quality)
+\item interactions between $h, t, g$.
+\end{enumerate}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Equation 2 results}
+\begin{enumerate}
+\item Parameters
+\item R2
+\item travel times
+\item what is missing: 
+  \begin{enumerate}
+\item visual quality
+\item lot size
+\item towns, roads, schools, rivers, building age/type, 
+\item interactions
+\end{enumerate}
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\frametitle{Travel time model}
+\end{frame}
+
+\section{Land value uplift tool}
+\begin{frame}
+\sectionpage
+\end{frame}
+
+\begin{frame}
+\frametitle{Land value uplift tool}
+\begin{itemize}
+\item Choose a region and choose investment type (houses, road, rail).
+\item Input details of the investment (a map, number of houses, types of houses, road junctions, road speed, etc).
+\item Model creates dataset of new houses, predicts new travel times, and predicts new prices.
+\item Produces a report with 1) summary of investment details, 2) summary statistics of new houses, travel times and prices, 3) graphs illustrating results.
+\end{itemize}
+\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Land value capture mechanisms}
+\begin{itemize}
+
+\item Community infrastructure levy.
+\begin{itemize}
+\item Rate set by LA.
+\item Rate varies across zones.
+\item Developments under 100sm exempt.
+\item Some existing rates range from 20 per sq.m. to 80 per sq. m.
+\end{itemize}
+\item Section 106.
+\begin{itemize}
+\item DC = DU * IM * CM
+\item developer contribution
+\item impact multiplier
+\item cost multiplier
+\end{itemize}
+\item Planning gains supplement.
+\item Strategic infrastructure levy.
+\item Compulsory purchase.
+\item Stamp duty.
+\item Council tax.
+\item Business rates.
+\end{itemize}
+
+\end{frame}
+
+
+\end{document}

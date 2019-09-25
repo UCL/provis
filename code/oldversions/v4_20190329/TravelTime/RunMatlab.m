@@ -1,0 +1,15 @@
+DataDir = 'C:/a/research/hedonic/NIC/data/TravelTime/data';
+OutDir = 'C:/a/research/hedonic/NIC/data/TravelTime/results';
+k = [5;5];
+plotflag=0;
+travelmodel(1,k,1e-04,2,1,plotflag,DataDir,OutDir);
+travelmodel(10,k,1e-04,2,1,plotflag,DataDir,OutDir);
+travelmodel(11,k,1e-04,2,1,plotflag,DataDir,OutDir); 
+travelmodel(2,k,1e-04,2,1,plotflag,DataDir,OutDir);
+travelmodel(3,k,1e-04,2,1,plotflag,DataDir,OutDir);
+travelmodel(4,k,1e-04,2,1,plotflag,DataDir,OutDir);
+travelmodel(5,k,1e-04,2,1,plotflag,DataDir,OutDir);
+travelmodel(6,k,1e-04,2,1,plotflag,DataDir,OutDir);
+travelmodel(7,k,1e-04,2,1,plotflag,DataDir,OutDir);
+travelmodel(8,k,1e-04,2,1,plotflag,DataDir,OutDir);
+travelmodel(9,k,1e-04,2,1,plotflag,DataDir,OutDir);

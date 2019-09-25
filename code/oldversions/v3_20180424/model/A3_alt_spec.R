@@ -1,0 +1,48 @@
+vlist3<-paste0("+ranktrans",
+               "+I((ranktrans_LON>1)*trans_LON)",
+               "+I((ranktrans_LON>1)*trans_LON^2)",
+               "+I((ranktrans_LON==1)*trans_LON)",
+               "+I((ranktrans_LON==1)*trans_LON^2)",
+               "+I((ranktrans_BRI==1)*trans_BRI)",
+               "+I((ranktrans_CAN==1)*trans_CAN)",
+               "+I((ranktrans_OXF==1)*trans_OXF)",
+               "+I((ranktrans_SOU==1)*trans_SOU)",
+               "+I((ranktrans_GFD==1)*trans_GFD)")
+
+
+vlist1<-paste0("location_value~builtuparea_pct+restrictedland_pct+localplanrate",
+               "+lu_domestic_shr+lu_gardens_shr+lu_nondom_shr+lu_road_shr+lu_rail_shr",
+               "+lu_greenspace_shr+lu_water_shr+popdensityOA+imddecile+prob_4band+noiseclass",
+               "+greenbelt")
+vlist2<-paste0("+I(drive_station>=30)",
+               "+I((drive_station<30)*log(1+drive_station))",
+               "+I((drive_station<30)*log(1+drive_station)^2)",
+               "+log(1+drive_town)+I(log(1+drive_town)^2)",
+               "+log(1+trans_town)+I(log(1+trans_town)^2)",
+               "+I(distance_coast>=10)",
+               "+I((distance_coast<10)*log(distance_coast))",
+               "+I((distance_coast<10)*log(distance_coast)^2)",
+               "+I(distance_airport>=10)",
+               "+I((distance_airport<10)*log(distance_airport))",
+               "+I((distance_airport<10)*log(distance_airport)^2)",
+               "+AONB+I((drive_AONB<30)*log(1+drive_AONB))",
+               "+I((drive_AONB<30)*log(1+drive_AONB)^2)",
+               "+natpark+I((drive_natpark<30)*log(1+drive_natpark))",
+               "+I((drive_natpark<30)*log(1+drive_natpark)^2)",
+               "+log(1+drive_aroad)+I(log(1+drive_aroad)^2)",
+               "+I((drive_motorway<30)*log(1+drive_motorway))",
+               "+I((drive_motorway<30)*log(1+drive_motorway)^2)")
+
+# 15 april 2018
+vlist2<-paste0("+rankdrive",
+               "+I(drive_HRG*(rankdrive_HRG==1))+I(drive_HRG*(rankdrive_HRG==2))",
+               "+I(drive_HRG*(rankdrive_HRG==3))",
+               "+I(drive_SHF*(rankdrive_SHF==1))+I(drive_SHF*(rankdrive_SHF==2))",
+               "+I(drive_SHF*(rankdrive_SHF==3))",
+               "+I(drive_YRK*(rankdrive_YRK==1))+I(drive_YRK*(rankdrive_YRK==2))",
+               "+I(drive_YRK*(rankdrive_YRK==3))",
+               "+I(drive_MBH*(rankdrive_MBH==1))+I(drive_MBH*(rankdrive_MBH==2))",
+               "+I(drive_MBH*(rankdrive_MBH==3))",
+               "+I((rankdrive_NYM==1)*drive_NYM)",
+               "+I((rankdrive_NYM==2)*drive_NYM)",
+               "+I((rankdrive_NYM==3)*drive_NYM)")

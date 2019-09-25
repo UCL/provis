@@ -1,0 +1,194 @@
+% TODO
+%    1) if road, settlement or rail coordinates outside region then quit
+%    2)   
+\documentclass{article}
+\usepackage{geometry}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{dcolumn}
+\usepackage{subfig}
+\usepackage{float}
+
+<<LIBRARIES,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
+library(knitr)
+opts_chunk$set(concordance=TRUE, 
+               echo=FALSE,
+               tidy=FALSE,
+               autodep=TRUE,
+               cache=TRUE, 
+               message=FALSE, 
+               warning=FALSE,
+               cache.path="cache/cache2",
+               size='scriptsize',
+               results='hide',
+               comment=NA, 
+               fig.width=4,
+               fig.height=4, 
+               out.width='.5\\textwidth',
+               fig.show='hold')
+
+#------------------------------------------------------------
+source(paste0(RootDir,"/code/model/B1LoadLibrary.R"))
+source(paste0(RootDir,"/code/model/B2SetPath.R"))
+source(paste0(RootDir,"/code/model/A4CreateSettlement.R"))
+source(paste0(RootDir,"/code/model/A5CreateTransport.R"))
+source(paste0(RootDir,"/code/model/A6PredictPrice.R"))
+source(paste0(RootDir,"/code/model/A7NewRoad.R"))
+
+@
+
+<<MODEL,cache=FALSE,results='hide'>>=
+
+nregs<-11
+regnames<-data.frame(region_id=seq(1:nregs), 
+                     region_str=c("CaMKOx", "CornwallDevon", 
+                                  "EastMid", "EastEng", 
+                                  "London", "NE", "NW", 
+                                  "SE", "SW", "WestMid", 
+                                  "YorkshireHumber"),
+                     name=c("Cambridge, Milton Keynes, and Oxford",
+                            "Cornwall and Devon",
+                            "East Midlands",
+                            "East of England",
+                            "London","North East",
+                            "North West","South East",
+                            "South West","West Midlands",
+                            "Yorkshire and the Humber"))
+region_map_index<-c(3,9,4,6,7,1,2,8,9,5,3)
+
+project_id          <- 1
+r                   <- 2
+infrastructure_type <- "settlement"   # c("rail","road","settlement")
+
+# Road parameters
+if (infrastructure_type=="road") {
+  method     <- "newroad"   # c("newroad","newrail","newspeed")
+  routefile  <- "region2_road1.kml"
+  speed      <- 80
+  multiplier <- 1
+} else if (infrastructure_type=="settlement") {
+  # Names of files in NewDataDir
+  files<-list.files(dirs$newdatadir)
+  settlementfile<-files[1]
+}  
+
+region_id       <- regnames$region_id[r]    
+region_str      <- as.character(regnames$region_str[r]) 
+dirs            <- B2SetPath(RootDir,region_id)
+DestinationFile <- paste0(dirs$datadir,"/destinations",region_id,".csv")
+
+dest  <- read.csv(DestinationFile)  
+dest  <- dest[dest$shortlist,]
+ndest <- nrow(dest)
+dest_name  <- strsplit(as.character(dest$name),",")
+dest_name  <- matrix(unlist(dest_name),2,nrow(dest))[1,]
+
+# load region shape file
+wgs.84          <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
+ukgrid = "+init=epsg:27700"
+regionshapefile <- "Regions_December_2015_Generalised_Clipped_Boundaries_in_England"
+regions         <- readOGR(dirs$mapdir,layer=regionshapefile)
+regions         <- spTransform(regions,CRS(wgs.84))
+
+if (infrastructure_type=="road") {
+  longroutefile<-paste0(dirs$mapdir,"/",routefile)
+  layer<-ogrListLayers(longroutefile)
+  road<-readOGR(longroutefile,layer=layer)
+  road1<-Line(coordinates(road)[,1:2])
+  roadlength<-LineLength(road1,longlat=TRUE)/1.6
+  njunctions<-nrow(road@coords)
+
+  junctions<-vector("list",njunctions)
+  for (i1 in 1:njunctions) {
+    junctions[[i1]]<-revgeocode(coordinates(road)[i1,1:2],source="google",output="more") 
+  }
+  start  <- levels(junctions[[1]]$postal_town)
+  finish <- levels(junctions[[njunctions]]$postal_town)
+  project_location<-start
+} else if (infrastructure_type=="settlement") {
+  # Other things to compute for new settlement
+}
+@
+
+<<COMPUTE_PRICES,cache=FALSE,echo=TRUE,results='asis'>>=
+# 1) Create counterfactual settlement
+# 2) Compute new travel times
+# 3) Compute new prices
+
+if (infrastructure_type=="settlement") {
+
+  # Extract and capitalise town name
+  newtown<-gsub("_new.csv","",settlementfile)
+  newtown<-paste0(toupper(substr(newtown,1,1)),substr(newtown,2,nchar(newtown)))
+
+  
+  newdata <- A4CreateSettlement(region_id,dirs,settlementfile)
+  out0    <- A6PredictPrice(newdata$m1data_new,newdata$m2data_new,dirs$outdir)  
+  out1    <- A6PredictPrice(newdata$m1data_new,newdata$m2data_new,dirs$outdir) 
+  
+  # 1) convex hull of settlement
+  houses<-SpatialPoints(newdata$m1data_new[,c("longitude","latitude")],CRS(wgs.84))
+  houses<-SpatialPointsDataFrame(houses,data=newdata$m1data_new)
+  houses_convexhull<-gConvexHull(houses)
+  
+  # Create spatial data frames of destionations for plotting
+  dest_spatial<-SpatialPoints(dest[,c("longitude","latitude")],CRS(wgs.84))
+  dest_spatial<-SpatialPointsDataFrame(dest_spatial,data=dest)
+  dest_envelope<-gBuffer(gEnvelope(dest_spatial),width=0.1)
+  c1<-gUnion(houses_convexhull,dest_envelope)
+  subregion<-gIntersection(regions[region_map_index[r],],c1)
+  
+  # 2) centroid of settlement (for descriptive stats)
+  project_centroid<-gCentroid(houses)  
+  project_location_full<-revgeocode(coordinates(project_centroid),source="google",output="more")
+  project_location<-project_location_full$postal_town
+  
+  # Land area of settlement
+  km_sq<-gArea(spTransform(houses_convexhull,ukgrid))/1e6
+
+  # Load results from models 1 and 2  
+  load(paste0(dirs$outdir,"/m2ols0.RData"))
+
+} else if (infrastructure_type=="road") {
+  newdata<-A5CreateTransport(region_id,infrastructure_type=infrastructure_type,
+                             method = method,routefile,multiplier,speed,dirs)
+  out0<-A6PredictPrice(newdata$m1data_new,newdata$m2data_old,dirs$outdir) 
+  out1<-A6PredictPrice(newdata$m1data_new,newdata$m2data_new,dirs$outdir)
+  
+  i1<-grep("\\<drive_",colnames(newdata$m2data_old))
+  i2<-grep("\\<drive_",colnames(newdata$m2data_old))
+
+  drivetime1<-newdata$m2data_old[,i1]
+  drivetime2<-newdata$m2data_new[,i2]
+  deltadrivetime <- drivetime2-drivetime1
+  a1<-matrix(unlist(strsplit(colnames(drivetime1),"_")),2,ndest+1)[2,]
+  a1[ndest+1]<-"RAIL"
+  names(drivetime1)<-a1
+  names(drivetime2)<-a1
+  names(deltadrivetime)<-a1
+}
+
+#    names(logprice)<-c("new","model1_size","model1_location_old","model1_location_new",
+#                     "model1_all","model2_new")
+  newprice<-exp(out1$new)
+  oldprice<-exp(out0$new)
+  deltaprice<-newprice-oldprice
+@
+
+\title{Region:   \Sexpr{regnames$name[r]} \\
+       Project ID:   project \Sexpr{project_id}}
+       %\\
+      % Impact of new \Sexpr{infrastructure_type} near \Sexpr{project_location} }
+\author{IFS Property Value Calculator}
+\date{}           
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+\end{document}

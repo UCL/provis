@@ -1,0 +1,381 @@
+% TODO
+%    1) if road, settlement or rail coordinates outside region then quit
+%    2)   
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+\usepackage{geometry}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{dcolumn}
+\usepackage{subfig}
+\usepackage{float}
+
+
+
+
+
+
+
+\title{Region:   Cornwall and Devon \\
+       Project ID:   project 1 \\
+       Impact of road improvement project near Cornwall and Devon }
+\author{IFS Property Value Calculator}
+\date{}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+\section{Type of project}
+The project is a \textbf{road} transport improvement project in the 
+\textbf{Cornwall and Devon} region. Figure \ref{fig:MAP} displays a map of the project area.
+The project area is approximately \ensuremath{2.385275\times 10^{4}} square kilometres. It is located near
+Cornwall and Devon. The project aims to reduce travel times to all destinations to 90
+\% of baseline travel times.
+
+% FIG 1:  MAP OF REGIONS
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}[H]
+
+{\centering \includegraphics[width=.5\textwidth]{figure/MAP-1} 
+
+}
+
+\caption[Map of travel improvement area]{Map of travel improvement area}\label{fig:MAP}
+\end{figure}
+
+
+\end{knitrout}
+
+To predict, new travel times for the region, this report assumes:
+\begin{itemize}
+\item House prices are determined by 1) property size and structure and 2) location. Details of the data used to estimate the model are presented in Section \ref{section:data}. Model details are presented in Section \ref{section:model}.
+\item Location values are primarily determined by travel time to various destinations, land use in the surrounding area, distance to the coast, and various local amenities and disamenties including greenbelt status, and road noise.  
+\item Travel times to 4 cities are the dominant factors for property values in this region. These cities are: (\textbf{ Barnstaple, Exeter, Falmouth, Plymouth} ).
+\item New travel times after the investment equal 0.9 multiplied by the baseline travel time 
+for all properties in the area shown on the map. 
+\item All travel times are estimated using Google Maps.
+\item The model does not account for changes in congestion or any other changes in travel time induced by the new road.
+\item The model provides short-run predictions only. In the long run, commuting patterns, job locations and the importance of destinations will likely change. The model does not account for these long run changes.
+\item The model provides the best approximation to the short run impact of the road improvement
+project.
+\end{itemize}
+
+% 5) impact of new investment
+\section{Impact of the new road}
+
+For each destination, these tables show the distribution of travel times from each property in the region. The tables also show the distribution of travel times from each property to the nearest rail station (RAIL).
+
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, Jan 12, 2018 - 15:18:19
+% Requires LaTeX packages: dcolumn 
+\begin{table}[!htbp] \centering 
+  \caption{Travel times (minutes): pre investment} 
+  \label{} 
+\small 
+\begin{tabular}{@{\extracolsep{2pt}}lD{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} } 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Statistic & BSP & EXE & FAL & PLY & RAIL \\ 
+\hline \\[-1.8ex] 
+Mean & 90.6 & 58.4 & 99.8 & 59.2 & 24.9 \\ 
+Min & 22.1 & 20.6 & 27.5 & 18.1 & 8.5 \\ 
+Pctl(25) & 67.1 & 32.1 & 81.2 & 40.7 & 19.1 \\ 
+Median & 99.1 & 57.9 & 111.4 & 57.0 & 22.4 \\ 
+Pctl(75) & 104.5 & 76.4 & 127.1 & 76.9 & 29.5 \\ 
+Max & 184.9 & 151.9 & 175.5 & 127.9 & 70.4 \\ 
+St. Dev. & 30.0 & 28.9 & 35.3 & 27.6 & 9.0 \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table} 
+
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, Jan 12, 2018 - 15:18:20
+% Requires LaTeX packages: dcolumn 
+\begin{table}[!htbp] \centering 
+  \caption{Travel times (minutes): post investment} 
+  \label{} 
+\small 
+\begin{tabular}{@{\extracolsep{2pt}}lD{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} } 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Statistic & BSP & EXE & FAL & PLY & RAIL \\ 
+\hline \\[-1.8ex] 
+Mean & 81.5 & 52.6 & 89.9 & 53.3 & 22.4 \\ 
+Min & 19.9 & 18.5 & 24.8 & 16.3 & 7.6 \\ 
+Pctl(25) & 60.4 & 28.8 & 73.1 & 36.7 & 17.2 \\ 
+Median & 89.2 & 52.1 & 100.2 & 51.3 & 20.1 \\ 
+Pctl(75) & 94.1 & 68.8 & 114.4 & 69.2 & 26.6 \\ 
+Max & 166.4 & 136.7 & 158.0 & 115.1 & 63.4 \\ 
+St. Dev. & 27.0 & 26.0 & 31.7 & 24.9 & 8.1 \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table} 
+
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, Jan 12, 2018 - 15:18:20
+% Requires LaTeX packages: dcolumn 
+\begin{table}[!htbp] \centering 
+  \caption{Change in travel time (minutes): (new minus old)} 
+  \label{} 
+\small 
+\begin{tabular}{@{\extracolsep{2pt}}lD{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} } 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Statistic & BSP & EXE & FAL & PLY & RAIL \\ 
+\hline \\[-1.8ex] 
+Mean & -9.1 & -5.8 & -10.0 & -5.9 & -2.5 \\ 
+Min & -18.5 & -15.2 & -17.6 & -12.8 & -7.0 \\ 
+Pctl(25) & -10.5 & -7.6 & -12.7 & -7.7 & -3.0 \\ 
+Median & -9.9 & -5.8 & -11.1 & -5.7 & -2.2 \\ 
+Pctl(75) & -6.7 & -3.2 & -8.1 & -4.1 & -1.9 \\ 
+Max & -2.2 & -2.1 & -2.8 & -1.8 & -0.8 \\ 
+St. Dev. & 3.0 & 2.9 & 3.5 & 2.8 & 0.9 \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{table} 
+
+\pagebreak
+\section{Impact on prices}
+
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, Jan 12, 2018 - 15:18:27
+% Requires LaTeX packages: dcolumn 
+\begin{table}[!htbp] \centering 
+  \caption{Property prices (units = year 2017 £ )} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lD{.}{.}{-1} D{.}{.}{-1} D{.}{.}{-1} } 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Statistic & oldprice & newprice & deltaprice \\ 
+\hline \\[-1.8ex] 
+Mean & 211,453.9 & 196,170.7 & -15,283.3 \\ 
+Min & 70,417.4 & 31,764.7 & -1,451,887.0 \\ 
+Pctl(25) & 152,595.0 & 136,471.1 & -23,816.1 \\ 
+Median & 189,818.7 & 177,368.4 & -2,545.6 \\ 
+Pctl(75) & 247,224.0 & 235,481.3 & 7,761.0 \\ 
+Max & 1,911,362.0 & 721,288.7 & 45,398.0 \\ 
+St. Dev. & 87,223.1 & 86,968.5 & 43,231.8 \\ 
+\hline \\[-1.8ex] 
+\multicolumn{4}{l}{This table shows the distribution of property prices across all properties in the region} \\ 
+\end{tabular} 
+\end{table} 
+
+
+\section{Data}\label{section:data}
+
+\pagebreak
+\section{Model}\label{section:model}
+Section \ref{section:model 1} shows how log prices depend on building characteristics and time.
+
+Section \ref{section:model 2} shows how log prices depend on travel times to important cities and destinations in the region as well as on other local amenities and disamenities.
+
+\subsection{Model 1}\label{section:model 1}
+
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, Jan 12, 2018 - 15:18:29
+\begin{table}[!htbp] \centering 
+  \caption{Dependence of log property values on structure and time} 
+  \label{} 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & logprice \\ 
+\hline \\[-1.8ex] 
+ year2009 & $-$0.066$^{***}$ (0.004) \\ 
+  year2010 & $-$0.003 (0.004) \\ 
+  year2011 & $-$0.022$^{***}$ (0.004) \\ 
+  year2012 & $-$0.016$^{***}$ (0.004) \\ 
+  year2013 & $-$0.011$^{**}$ (0.004) \\ 
+  year2014 & 0.029$^{***}$ (0.004) \\ 
+  year2015 & 0.068$^{***}$ (0.004) \\ 
+  year2016 & 0.103$^{***}$ (0.004) \\ 
+  year2017 & 0.129$^{***}$ (0.005) \\ 
+  propertytypeF & $-$0.269$^{***}$ (0.007) \\ 
+  propertytypeO & $-$0.026$^{*}$ (0.014) \\ 
+  propertytypeS & $-$0.212$^{***}$ (0.002) \\ 
+  propertytypeT & $-$0.314$^{***}$ (0.002) \\ 
+  newbuildY & 0.091$^{***}$ (0.003) \\ 
+  tenureL & $-$0.146$^{***}$ (0.006) \\ 
+  bSize1 & 0.281$^{***}$ (0.011) \\ 
+  bSize2 & 0.459$^{***}$ (0.009) \\ 
+  bSize3 & 0.757$^{***}$ (0.010) \\ 
+  bSize4 & 1.281$^{***}$ (0.011) \\ 
+  bSize5 & 1.387$^{***}$ (0.015) \\ 
+  bLat1 & 2.460$^{***}$ (0.115) \\ 
+ \hline \\[-1.8ex] 
+Observations & 100,000 \\ 
+R$^{2}$ & 0.682 \\ 
+Adjusted R$^{2}$ & 0.681 \\ 
+Residual Std. Error & 0.256 (df = 99859) \\ 
+F Statistic & 1,528.639$^{***}$ (df = 140; 99859) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+\subsection{Model 2}\label{section:model 2}
+
+% Table created by stargazer v.5.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Fri, Jan 12, 2018 - 15:18:29
+\begin{table}[!htbp] \centering 
+  \caption{Dependence of log property values on locational amenities } 
+  \label{} 
+\small 
+\begin{tabular}{@{\extracolsep{5pt}}lc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+ & \multicolumn{1}{c}{\textit{Dependent variable:}} \\ 
+\cline{2-2} 
+\\[-1.8ex] & location\_value \\ 
+\hline \\[-1.8ex] 
+ builtuparea\_pct & $-$0.0004$^{***}$ (0.0001) \\ 
+  busyland\_pct & $-$0.0005$^{***}$ (0.0002) \\ 
+  restrictedland\_pct &  \\ 
+  localplanrate & $-$11.657$^{***}$ (0.873) \\ 
+  lu\_domestic\_shr & $-$0.125$^{*}$ (0.069) \\ 
+  lu\_gardens\_shr & 0.317$^{***}$ (0.041) \\ 
+  lu\_nondom\_shr & 0.805$^{***}$ (0.101) \\ 
+  lu\_road\_shr & $-$0.314$^{***}$ (0.080) \\ 
+  lu\_rail\_shr & $-$0.542$^{***}$ (0.102) \\ 
+  lu\_greenspace\_shr & 0.124$^{***}$ (0.036) \\ 
+  lu\_water\_shr & 0.148$^{***}$ (0.039) \\ 
+  popdensityOA & $-$0.0001$^{***}$ (0.00002) \\ 
+  imddecile2 & $-$0.002 (0.004) \\ 
+  imddecile3 & 0.006 (0.004) \\ 
+  imddecile4 & 0.005 (0.004) \\ 
+  imddecile5 & 0.008$^{**}$ (0.004) \\ 
+  imddecile6 & 0.014$^{***}$ (0.004) \\ 
+  imddecile7 & 0.011$^{***}$ (0.004) \\ 
+  imddecile8 & 0.018$^{***}$ (0.004) \\ 
+  imddecile9 & 0.031$^{***}$ (0.004) \\ 
+  imddecile10 & 0.040$^{***}$ (0.005) \\ 
+  prob\_4bandHigh & 0.042 (0.056) \\ 
+  prob\_4bandLow & 0.046 (0.056) \\ 
+  prob\_4bandMedium & 0.061 (0.056) \\ 
+  prob\_4bandNone & 0.051 (0.056) \\ 
+  prob\_4bandVery Low & 0.089 (0.057) \\ 
+  noiseclass\textgreater =75.0 & 0.027 (0.056) \\ 
+  noiseclass55.0-59.9 & $-$0.012$^{***}$ (0.003) \\ 
+  noiseclass60.0-64.9 & $-$0.005 (0.005) \\ 
+  noiseclass65.0-69.9 & $-$0.006 (0.007) \\ 
+  noiseclass70.0-74.9 & $-$0.015 (0.015) \\ 
+  greenbelt &  \\ 
+  log(distance\_coast) & $-$0.010$^{***}$ (0.001) \\ 
+  log(drive\_station) & 0.026$^{***}$ (0.008) \\ 
+  Constant & 1.501$^{***}$ (0.122) \\ 
+ \hline \\[-1.8ex] 
+Observations & 9,751 \\ 
+R$^{2}$ & 0.828 \\ 
+Adjusted R$^{2}$ & 0.826 \\ 
+Residual Std. Error & 0.056 (df = 9662) \\ 
+F Statistic & 526.885$^{***}$ (df = 88; 9662) \\ 
+\hline 
+\hline \\[-1.8ex] 
+\textit{Note:}  & \multicolumn{1}{r}{$^{*}$p$<$0.1; $^{**}$p$<$0.05; $^{***}$p$<$0.01} \\ 
+\end{tabular} 
+\end{table} 
+
+\pagebreak
+\section{Figures}
+
+
+% FIGURE 2.1: Densities and heatmaps of travel times
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=.5\textwidth]{figure/DRIVE_TIME_PLOTS_1-1} 
+\includegraphics[width=.5\textwidth]{figure/DRIVE_TIME_PLOTS_1-2} 
+\includegraphics[width=.5\textwidth]{figure/DRIVE_TIME_PLOTS_1-3} 
+\includegraphics[width=.5\textwidth]{figure/DRIVE_TIME_PLOTS_1-4} 
+\includegraphics[width=.5\textwidth]{figure/DRIVE_TIME_PLOTS_1-5} 
+\includegraphics[width=.5\textwidth]{figure/DRIVE_TIME_PLOTS_1-6} \caption[Driving time]{Driving time}\label{fig:DRIVE_TIME_PLOTS_1}
+\end{figure}
+
+
+\end{knitrout}
+
+% FIGURE 2.2: Densities and heatmaps of travel times
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=.5\textwidth]{figure/DRIVE_TIME_PLOTS_2-1} 
+\includegraphics[width=.5\textwidth]{figure/DRIVE_TIME_PLOTS_2-2} \caption[Driving time]{Driving time}\label{fig:DRIVE_TIME_PLOTS_2}
+\end{figure}
+
+
+\end{knitrout}
+
+
+% Figure 3: Densities and heatmaps of prices
+\begin{knitrout}\scriptsize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{figure}
+\includegraphics[width=.5\textwidth]{figure/PRICE_PLOTS-1} 
+\includegraphics[width=.5\textwidth]{figure/PRICE_PLOTS-2} 
+\includegraphics[width=.5\textwidth]{figure/PRICE_PLOTS-3} 
+\includegraphics[width=.5\textwidth]{figure/PRICE_PLOTS-4} 
+\includegraphics[width=.5\textwidth]{figure/PRICE_PLOTS-5} 
+\includegraphics[width=.5\textwidth]{figure/PRICE_PLOTS-6} \caption[Impact of project on prices]{Impact of project on prices}\label{fig:PRICE_PLOTS}
+\end{figure}
+
+
+\end{knitrout}
+
+
+
+\end{document}

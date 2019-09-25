@@ -1,0 +1,124 @@
+% TODO
+%    1) intro and data description
+%    2) summary stats of data
+%    3) model 1 regression results
+%    4) model 2 regression results
+\documentclass{article}
+\usepackage{geometry}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{dcolumn}
+\usepackage{subfig}
+\usepackage{float}
+
+<<LIBRARIES,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
+library(knitr)
+opts_chunk$set(concordance=TRUE, 
+               echo=FALSE,
+               tidy=FALSE,
+               autodep=TRUE,
+               cache=TRUE, 
+               cache.path='cache/farms',
+               message=FALSE, 
+               warning=FALSE,
+               size='scriptsize',
+               results='hide',
+               comment=NA, 
+               fig.width=4,
+               fig.height=4, 
+               out.width='.5\\textwidth',
+               fig.show='hold')
+
+# Set RootDir
+if (!exists("RootDir") ) {
+  host<-system("hostname",intern=TRUE)
+  if (host=="dh-230-mac.econ.ucl.ac.uk") {
+    RootDir<-"/Users/uctpln0/Documents/research/hedonic/NIC"
+  } else if (host=="minelava") {
+    RootDir<-"C:/a/research/hedonic/NIC"
+  } else if (host=="jake.local" | host=="vic.local") {
+    RootDir<-"/home/uctpln0/hedonic/NIC"
+  } else if (host=="MateuszsMacBook") {
+    RootDir<-"/Users/mateuszmysliwski/Dropbox/NICProject"
+  } else {
+    info_sys<-Sys.info()
+    user<-info_sys["user"]
+    if (user=="uctpln0") {
+      RootDir<-"/home/uctpln0/hedonic/NIC"
+    } else {
+      RootDir<-"/Users/larsnesheim/Documents/research/hedonic/NIC"
+    }
+  }
+}
+#------------------------------------------------------------
+source(paste0(RootDir,"/code/model/B1LoadLibrary.R"))
+source(paste0(RootDir,"/code/model/B2SetPath.R"))
+
+@
+
+<<MODEL,cache=FALSE,results='hide'>>=
+
+dirs            <- B2SetPath(RootDir,region_id=0)
+print(paste0(dirs$farmdir,"/farms3.RData"))
+load(paste0(dirs$farmdir,"/farms3.RData"))
+firstyear <- min(farms3$year)
+lastyear  <- max(farms3$year)
+
+@
+
+
+\title{ Analysis of RICS farm price data \Sexpr{firstyear} - \Sexpr{lastyear}}
+\author{IFS}
+\date{}           
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+\section{Data}
+% FIG 1:  MAP OF REGIONS
+<<MAP,fig.cap="Guide prices from RICS data",fig.align="center",fig.pos="H">>=
+i1<- (complete.cases(farms3[,c("longitude","latitude","guideprice")]) & farms3$guideprice>0)
+heatmap1(farms3$longitude,farms3$latitude,farms3$guideprice,filter=i1,
+         resolution=0.1,zlabel="Farm transaction prices",
+         outfile=paste0(dirs$outdir,"/farm_prices.pdf"))
+@   
+
+<<SUMMARY_STATS,cache=TRUE,results='asis',fig.pos="H">>=
+title<-paste0("Summary statistics RICS farm directory: ",
+              as.character(firstyear),"-",as.character(lastyear))
+#stargazer(farms3,title=title,out.header=TRUE,digits=2,font.size="small",
+#          summary.stat=c("mean","min","p25","median","p75","max","sd"))
+vlist<-c("acres","landclass","country")
+#stargazer(farms3[,vlist],title=title,out.header=TRUE,digits=2,font.size="small",
+#          out=paste0(dirs$outdir,"/farms_summary.tex"))
+xtable(summary(farms3[,vlist]))
+
+#i1<- (complete.cases(farms3[,c("longitude","latitude","guideprice")]) & guideprice>0)
+#heatmap1(farms3$longitude,farms3$latitude,log(farms3$guideprice),filter=i1,
+#         resolution=0.1,zlabel="Farm transaction prices",
+#         outfile=paste0(dirs$outdir,"/farm_prices.pdf"))
+
+@
+
+\section{Model}\label{section:model}
+Section \ref{section:model 1} shows how log prices depend on building characterstics and time.
+
+Section \ref{section:model 2} shows how log prices depend on travel times to important cities and destinations in the region as well as on other local amenities and disamenities.
+
+\subsection{Model 1}\label{section:model 1}
+
+\subsection{Model 2}\label{section:model 2}
+
+\section{Figures}
+
+
+
+
+
+\end{document}

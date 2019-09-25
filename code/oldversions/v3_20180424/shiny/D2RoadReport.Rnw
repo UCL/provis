@@ -1,0 +1,392 @@
+% TODO
+%    1) if road, settlement or rail coordinates outside region then quit
+\documentclass{article}
+\usepackage{geometry}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{dcolumn}
+\usepackage{subfig}
+\usepackage{float}
+\usepackage{multirow}
+
+<<LIB,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
+library(knitr)
+opts_chunk$set(concordance=TRUE, 
+               echo=FALSE,
+               tidy=FALSE,
+               autodep=TRUE,
+               cache=FALSE,
+               cache.path="cache/road",
+               message=FALSE, 
+               warning=FALSE,
+               size='scriptsize',
+               results='hide',
+               comment=NA, 
+               fig.width=4,
+               fig.height=4, 
+               out.width='.5\\textwidth',
+               fig.show='hold')
+
+
+@
+
+<<MODEL,cache=TRUE,echo=FALSE>>=
+nregs<-11
+regnames<-data.frame(region_id=seq(1:nregs), 
+                     region_str=c("CaMKOx", "CornwallDevon", 
+                                  "EastMid", "EastEng", 
+                                  "London", "NE", "NW", 
+                                  "SE", "SW", "WestMid", 
+                                  "YorkshireHumber"),
+                     name=c("Cambridge, Milton Keynes, and Oxford",
+                            "Cornwall and Devon",
+                            "East Midlands",
+                            "East of England",
+                            "London","North East",
+                            "North West","South East",
+                            "South West","West Midlands",
+                            "Yorkshire and the Humber"))
+region_map_index<-c(3,9,4,6,7,1,2,8,9,5,3)
+infrastructure_type <- "road"   # c("rail","road","settlement")
+
+# parameters of new road
+aa1<-getwd()
+cat(file=stderr(),"getwd() = ",aa1,"\n")
+load(file="parms.RData")
+cat(file=stderr(),"project_id = ",parms$project_id,"\n")
+cat(file=stderr(),"region_id  = ",parms$region_id,"\n")
+cat(file=stderr(),"infrastructure_type = ",parms$infrastructure_type,"\n")
+cat(file=stderr(),"method = ",parms$method,"\n")
+cat(file=stderr(),"speed = ",parms$speed,"\n")
+
+project_id <- parms$project_id
+region_id  <- parms$region_id
+method     <- parms$method
+shapefile  <- parms$roadfile
+#shapefile  <- paste0(dirs$rootdir,"/code/currentversion/shiny/roads/region",
+#                     as.character(region_id),"_road1.kml")
+speed      <- parms$speed
+multiplier <- parms$multiplier
+travelmodelbasis <-parms$travelmodelbasis
+
+m2flag     <- 5  # 0 = m2ols0, 1 = m2ols1, 5 = m2ols5
+
+  
+region_str      <- as.character(regnames$region_str[region_id]) 
+dirs            <- B2SetPath(RootDir,CodeDir,region_id)
+DestinationFile <- paste0(dirs$datadir,"/destinations",region_id,"B.csv")
+
+dest  <- read.csv(DestinationFile)  
+dest  <- dest[dest$shortlist,]
+ndest <- nrow(dest)
+town  <- strsplit(as.character(dest$name),",")
+town  <- matrix(unlist(town),2,nrow(dest))[1,]
+
+# load region shape file
+wgs.84          <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
+ukgrid          <- "+init=epsg:27700"
+regionshapefile <- "Regions_December_2015_Generalised_Clipped_Boundaries_in_England"
+regions         <- readOGR(dirs$mapdir,layer=regionshapefile)
+regions         <- spTransform(regions,CRS(wgs.84))
+
+layer1<-ogrListLayers(shapefile)
+road<-readOGR(shapefile,layer=layer1)
+if (class(road)=="SpatialPointsDataFrame") {
+  road1<-Line(coordinates(road)[,1:2])
+} else if (class(road)=="SpatialLinesDataFrame") {
+  road1<-road@lines[[1]]@Lines[[1]]
+}
+roadlength<-LineLength(road1,longlat=TRUE)/1.6
+njunctions<-nrow(road1@coords)
+
+#junctions<-vector("list",njunctions)
+#for (i1 in 1:njunctions) {
+#  for (i2 in 1:50) { 
+#    junctions[[i1]]<-try(revgeocode(coordinates(road1)[i1,1:2],output="more")) 
+#    if (!anyNA(junctions[[i1]])) {
+#      break()
+#    }
+#  }
+#}
+#start  <- levels(junctions[[1]]$postal_town)
+#finish <- levels(junctions[[njunctions]]$postal_town)
+
+#project_location<-start
+  # Load results from models 1 and 2 
+  if (m2flag==0) {
+    load(paste0(dirs$outdir,"/m2ols0.RData"))
+    m2<-m2ols0
+  } else if (m2flag==1) {
+    load(paste0(dirs$outdir,"/m2ols1.RData"))
+    m2<-m2ols1
+  } else if (m2flag==5) {
+    load(paste0(dirs$outdir,"/m2ols5.RData"))
+    m2<-m2ols5
+  }
+
+@
+
+<<COMPUTE_PRICES,cache=FALSE,results='hide'>>=
+# 1) Create counterfactual settlement
+# 2) Compute new travel times
+# 3) Compute new prices
+newdata<-A5CreateTransport(region_id,infrastructure_type=infrastructure_type,
+                           method = method,shapefile,multiplier,speed,dirs,usemapdir=FALSE,
+                           travelmodelbasis=travelmodelbasis)
+out0<-A6PredictPrice(newdata$m1data_new,newdata$m2data_old,dirs$outdir,m2flag=m2flag) 
+out1<-A6PredictPrice(newdata$m1data_new,newdata$m2data_new,dirs$outdir,m2flag=m2flag)
+
+# Get names of postal_town for start and finish of road  
+junctions<-knn(newdata$m2data_old[,c("longitude","latitude")],coordinates(road1)[,1:2],
+               newdata$m2data_old$postal_town,k=1)
+start  <- as.character(junctions[1])
+finish <- as.character(junctions[njunctions])
+project_location<-start
+
+#    names(logprice)<-c("new","model1_size","model1_location_old","model1_location_new",
+#                     "model1_all","model2_new")
+newprice<-exp(out1$new)
+oldprice<-exp(out0$new)
+deltaprice<-newprice-oldprice
+  
+i1<-grep("\\<drive_",colnames(newdata$m2data_old))
+i2<-grep("\\<drive_",colnames(newdata$m2data_old))
+
+drivetime1<-newdata$m2data_old[,i1]
+drivetime2<-newdata$m2data_new[,i2]
+deltadrivetime <- drivetime2-drivetime1
+a1<-matrix(unlist(strsplit(colnames(drivetime1),"_")),2,length(drivetime1))[2,]
+#a1[ndest+1]<-"RAIL"
+names(drivetime1)<-a1
+names(drivetime2)<-a1
+names(deltadrivetime)<-a1
+
+@
+
+\title{Region:   \Sexpr{regnames$name[region_id]} \\
+       Project ID:   project \Sexpr{project_id} \\
+       Impact of new \Sexpr{infrastructure_type} near \Sexpr{project_location} }
+\author{IFS Property Value Calculator}
+\date{}           
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+\section{Type of project}
+The project is a new \textbf{\Sexpr{infrastructure_type}} in the 
+\textbf{\Sexpr{regnames$name[region_id]}} region. Figure \ref{fig:MAP} displays a map of the new \Sexpr{infrastructure_type}. The road is approximately \Sexpr{round(roadlength,1)} miles long and has \Sexpr{njunctions} junctions. It begins near \Sexpr{start} and finishes near \Sexpr{finish}.
+
+% FIG 1:  MAP OF REGIONS
+<<MAP,fig.cap="Route map of road",fig.align="center",fig.pos="H">>=
+if (region_id!=1) {
+  plot(regions[region_map_index[region_id],],main="Route map for new road")
+} else if (region_id==1) {
+  plot(regions[region_map_index[c(3,4,8)],],main="Route map for new road")
+}
+lines(coordinates(road1),col="red")
+points(coordinates(road1)[,1:2],col="red",pch=2)
+@   
+
+It is assumed that the average speed on the new \Sexpr{infrastructure_type} is \Sexpr{speed} miles per hour (mph).
+To predict, new travel times for the region, this report assumes:
+\begin{itemize}
+\item House prices are determined by 1) property size and structure and 2) location. Details of the data used to estimate the model are presented in Section \ref{section:data}. Model details are presented in Section \ref{section:model}.
+\item Location values are primarily determined by travel time to various destinations, land use in the surrounding area, distance to the coast, and various local amenities and disamenties including greenbelt status, and road noise.  
+\item Travel times to \Sexpr{nrow(dest)} cities are the dominant fators for property values in this region. These cities are: (\textbf{ \Sexpr{town}} ).
+\item New travel times after the investment equal the minimum of the baseline travel time and the new travel time using the new \Sexpr{infrastructure_type}. 
+\item New travel time using the new \Sexpr{infrastructure_type} consists of:
+\begin{enumerate}
+\item travel time from each house to the nearest junction/station on the new \Sexpr{infrastructure_type}.
+\item travel time along the new \Sexpr{infrastructure_type}.
+\item travel time from the new \Sexpr{infrastructure_type} to each destination.
+\end{enumerate}
+\item All travel times are estimated using Google Maps.
+\item The model does not account for changes in congestion or any other changes in travel time induced by the new \Sexpr{infrastructure_type}.
+\item The model provides short-run predictions only. In the long run, commuting patterns, job locations and the importance of destinations will likely change. The model does not account for these long run changes.
+\item The model provides the best approximation to the short run impact of the new \Sexpr{infrastructure_type}.
+\end{itemize}
+
+% 5) impact of new investment
+\section{Impact of the new \Sexpr{infrastructure_type}}
+
+For each city, these tables show the distribution of travel times from each property in the region. The tables also show the distribution of travel times from each property to the nearest rail station (RAIL).
+<<DRIVE_TIME_SUMSTATS,results='asis',CACHE=FALSE,echo=FALSE>>=
+title<-c("Travel times (minutes): pre investment",
+         "Travel times (minutes): post investment",
+         "Change in travel time (minutes): (new minus old)")
+stargazer(drivetime1,
+          drivetime2,
+          deltadrivetime,title=title,align=TRUE, out.header=TRUE,digits=1,
+          summary.stat=c("mean","min","p25","median","p75","max","sd"),
+          font.size = "small",flip=TRUE,
+          column.sep.width="2pt")
+@
+\pagebreak
+\section{Impact on prices}
+<<PRICE_SUMSTATS,results='asis',fig.pos="H">>=
+title<-"Property prices (units = year 2017 £ )"
+stargazer(data.frame(oldprice,newprice,deltaprice),
+          title=title,align=TRUE, out.header=TRUE,digits=1,
+          flip=TRUE,summary.stat=c("mean","min","p25","median","p75","max","sd"),
+          notes="This table shows the distribution of property prices across all properties in the region")
+@
+
+\section{Data}\label{section:data}
+The data for this project are derived from several sources. Full details are available from IFS upon request. 
+
+The main data sources are as follows:
+\begin{itemize}
+\item Land Registry prices paid data from 1993 to present.
+\item VOA data commercial rents data.
+\item Infrastructure, land use and amenities data from OS, Google, DCLG, DOT, DEFRA, Census (roads, bridges, rail networks and stations, airports, rivers, parks, buildings, job locations, travel times).
+\item Publicly available planning data at most disaggregate level available from DCLG and local authorities.
+\item Additional data to be investigated:
+\begin{itemize}
+\item Land Market Survey from RICS.
+\item Glenigan data on planning and construction activity.
+\item Other DFT data sources.
+\end{itemize}
+\end{itemize}
+
+Some of the variables included in the model are as follows:
+\begin{tiny}
+
+\begin{table}[h]
+\caption{Baseline database}
+\begin{center}
+\begin{tabular}{|llll|}
+\hline
+Type		&Variable 				& Description 					& Source \\ \hline
+Outcome	&pricepaid 		& transaction price of property & \multirow{5}{3.5cm}{Land Registry} \\
+Building 	&propertytype			& Detached/flat etc				& \\ 
+Building 	&newbuild 				& Is it a new build				& \\ 
+Building 	&tenure 				& Freehold/leasehold			& \\ 
+Location	&postcode 				& post code						& \\ \hline
+
+Location	&eastings 				& east coordinates				& \multirow{2}{3.5cm}{AddressBase Premium}\\
+Location	&northings 				& north coordinates 			& \\ \hline
+
+Building	&total\_floor\_area		& Floor space					& \multirow{5}{3.5cm}{DCLG EPC data}\\
+Building	&number\_heated\_rooms	& Number of rooms				& \\
+Building	&extension\_count		& Number of extensions			& \\
+Building	&number\_open\_fireplaces	& Number of fireplaces		& \\
+Building	&number\_heated\_rooms	& Number of rooms				& \\
+Building	&floor\_height			& Ceiling height 				& \\ \hline
+
+Planning	&greenbelt				& 1 if in greenbelt				& DCLG green belt stats \\
+Amenity		&floodzone3 			& 1 if in floodzone3			& EA planning flood zone data\\ 
+Planning	&localplanrate 			& Planned housing increase (\%)	& DCLG collated local plans \\
+Planning 	&builtuparea\_pct 		& Built-up (BU) land (LA\%) 	& \multirow{5}{3.5cm}{DCLG land constraints}\\
+Planning 	&busyland\_pct 			& BU and protected land (LA\%) 	& \\
+Planning 	&busylandfz3\_pct 		& BU + prot. + fz3 (LA\%)		& \\
+Planning 	&restrictedland\_pct 	& Protected land (LA\%) 		& \\
+Planning 	&restrictedlandfz3\_pct	& Prot + fz3 (LA\%)				& \\
+Amenity 	&noiseclass 			& Daytime traffic volume		& \multirow{2}{3.5cm}{EA road noise}\\
+Amenity 	&roadnoise 				& 1 = traffic louder than 55dB	& \\
+Travel	 	&traveltimes 			& To employment centres			& Google maps/estimates\\
+Employment & jobs & Number of jobs in OA & Census \\
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+\end{tiny}
+
+\pagebreak
+\section{Model}\label{section:model}
+Section \ref{section:model 1} shows how log prices depend on building characterstics and time.
+
+Section \ref{section:model 2} shows how log prices depend on travel times to important cities and destinations in the region as well as on other local amenities and disamenities.
+
+\subsection{Model 1}\label{section:model 1}
+<<MODEL1_SUMSTATS,results='asis'>>=
+load(paste0(dirs$outdir,"/m1spline0.RData"))
+iomit<- (grepl("Lat",names(m1spline0$coefficients)) | 
+         grepl("Lon",names(m1spline0$coefficients)))
+keeplist<-c(1:length(names(m1spline0$coefficients)))
+keeplist<-keeplist[!iomit]
+
+stargazer(m1spline0,keep=keeplist,no.space=TRUE,single.row=TRUE,
+          title="Dependence of log property values on structure and time")
+@
+\subsection{Model 2}\label{section:model 2}
+<<MODEL2_SUMSTATS,results='asis',fig.pos="H">>=
+stargazer(m2,no.space=TRUE,single.row=TRUE,
+          font.size="small",omit="spline",
+          title="Dependence of log property values on locational amenities ")
+@
+\pagebreak
+\section{Figures}
+
+
+% FIGURE 2.1: Densities and heatmaps of travel times
+<<DRIVE_TIME_PLOTS_1,fig.cap="Driving time">>=
+  nfig<-min(3,ncol(deltadrivetime))
+  for (i1 in 1:nfig) {
+    title=paste0("Drive time reduction: ",town[i1])
+    plot(density(deltadrivetime[,i1],na.rm=TRUE),main=title,xlab="minutes of drive time")
+ #   heatmap1(newdata$m2data_new$longitude,newdata$m2data_new$latitude,deltadrivetime[,i1],
+#             resolution=0.01,
+#             zlabel="$\\Delta$ travel time (minutes)",
+#             outfile=paste0(dirs$outdir,"/deltadrivetime_",dest$shortname[i1],".pdf"),
+#             places=dest[,c("shortname","longitude","latitude")],
+#             route=as.data.frame(road)[,c(1,3,4)],routelabel = "new road")
+  }
+@
+
+% FIGURE 2.2: Densities and heatmaps of travel times
+<<DRIVE_TIME_PLOTS_2,fig.cap="Driving time">>=
+  if (ncol(deltadrivetime)>3) {
+    for (i1 in 4:ncol(deltadrivetime)) {
+      title=paste0("Drive time reduction: ",town[i1])
+      plot(density(deltadrivetime[,i1],na.rm=TRUE),main=title,xlab=" minutes of drive time")
+#      heatmap1(newdata$m2data_new$longitude,newdata$m2data_new$latitude,deltadrivetime[,i1],
+#               resolution=0.01,
+#               zlabel="$\\Delta travel time",
+#               outfile=paste0(dirs$outdir,"/deltadrivetime_",dest$shortname[i1],".pdf"),
+#               places=dest[,c("shortname","longitude","latitude")],
+#               route=as.data.frame(road)[,c(1,3,4)],routelabel = "new road")
+    }
+  }
+@
+
+
+% Figure 3: Densities and heatmaps of prices
+<<PRICE_PLOTS,fig.cap="Impact of project on prices">>=
+  title="Prices before the investment"
+  plot(density(oldprice,na.rm=TRUE),main=title,xlab="property price (2017 GBP) ")
+#  heatmap1(newdata$m2data_new$longitude,newdata$m2data_new$latitude,oldprice,
+#           resolution=0.01,
+#           zlabel=paste0("price (2017 GBP) ",dest$shortname[i1]),
+#           outfile=paste0(dirs$outdir,"/price0.pdf"),
+#           places=dest[,c("shortname","longitude","latitude")],
+#           route=as.data.frame(road)[,c(1,3,4)],routelabel = "new road")
+  
+  title="Prices post investment"
+  plot(density(newprice,na.rm=TRUE),main=title,xlab="property price (2017 GBP) ")
+#  heatmap1(newdata$m2data_new$longitude,newdata$m2data_new$latitude,newprice,
+#           resolution=0.01,
+#           zlabel=paste0("price (2017 GBP) ",dest$shortname[i1]),
+#           outfile=paste0(dirs$outdir,"/price1.pdf"),
+##           places=dest[,c("shortname","longitude","latitude")],
+#           route=as.data.frame(road)[,c(1,3,4)],routelabel = "new road")
+
+  title="Change in price: (new minus old price)"
+  plot(density(deltaprice,na.rm=TRUE),main=title,xlab="property price (2017 GBP) ")
+#  heatmap1(newdata$m2data_new$longitude,newdata$m2data_new$latitude,deltaprice,
+#           resolution=0.01,
+#           zlabel=paste0("$\\Delta$ price (2017 GBP) ",dest$shortname[i1]),
+#           outfile=paste0(dirs$outdir,"/deltaprice.pdf"),
+#           places=dest[,c("shortname","longitude","latitude")],
+#           route=as.data.frame(road)[,c(1,3,4)],routelabel = "new road")
+  
+@
+
+
+
+\end{document}

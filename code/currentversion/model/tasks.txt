@@ -1,0 +1,45 @@
+Tool
+1) show something to user when waiting
+2) replace pop density choice with something else
+3) clean up output file
+4) convert rateable values to value 
+
+
+1) data documentation
+2) data webpage
+3) VOA
+4) revise and feedback
+10) fix output of tool: make sure there are warnings
+11) discuss the error terms in the regressions
+12) confidence regions??
+
+Missing data
+1) rivers
+2) air pollution
+3) schools
+4) EPC rating or other property traits in model 1
+5) lot size
+6) building age and quality
+
+Future version
+1) replace model 2 with logit based model using commuting patterns
+2) compete to random forests
+
+
+Tool
+1) add option to build on urban land
+2) fix reports
+3) download new data
+4) combinations of projects
+15) caveats
+16) user options
+    a) enter land costs
+    b) multiple roads as lines
+18) multiple regions
+19) create regional aroad files so that don't have to load all aroads
+20) build in macro house price growth
+21) csv file instead of kml file
+22) London destinations
+23) improve CRS in model 1, tensor product instead
+
+24

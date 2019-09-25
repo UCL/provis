@@ -1,0 +1,108 @@
+\documentclass{article}
+\usepackage{geometry}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{dcolumn}
+\usepackage{subfig}
+\usepackage{float}
+
+<<LIB1,cache=FALSE,echo=FALSE,results='hide',message=FALSE,warning=FALSE>>=
+library(knitr)
+opts_chunk$set(concordance=TRUE, 
+               echo=FALSE,
+               tidy=FALSE,
+               autodep=TRUE,
+               cache=TRUE, 
+               message=FALSE, 
+               warning=FALSE,
+               cache.path='cache/test',
+               size='scriptsize',
+               results='hide',
+               comment=NA, 
+               fig.width=4,
+               fig.height=4, 
+               out.width='.5\\textwidth',
+               fig.show='hold')
+
+# Set RootDir
+if (!exists("RootDir") ) {
+  host<-system("hostname",intern=TRUE)
+  if (host=="dh-230-mac.econ.ucl.ac.uk") {
+    RootDir<-"/Users/uctpln0/Documents/research/hedonic/NIC"
+  } else if (host=="minelava") {
+    RootDir<-"C:/a/research/hedonic/NIC"
+  } else if (host=="jake.local" | host=="vic.local") {
+    RootDir<-"/home/uctpln0/hedonic/NIC"
+  } else if (host=="MateuszsMacBook") {
+    RootDir<-"/Users/mateuszmysliwski/Dropbox/NICProject"
+  } else {
+    info_sys<-Sys.info()
+    user<-info_sys["user"]
+    if (user=="uctpln0") {
+      RootDir<-"/home/uctpln0/hedonic/NIC"
+    } else {
+      RootDir<-"/Users/larsnesheim/Documents/research/hedonic/NIC"
+    }
+  }
+}
+#------------------------------------------------------------
+source(paste0(RootDir,"/code/model/B1LoadLibrary.R"))
+source(paste0(RootDir,"/code/model/B2SetPath.R"))
+source(paste0(RootDir,"/code/model/A4CreateSettlement.R"))
+source(paste0(RootDir,"/code/model/A5CreateTransport.R"))
+source(paste0(RootDir,"/code/model/A6PredictPrice.R"))
+source(paste0(RootDir,"/code/model/A7NewRoad.R"))
+
+@
+
+<<C1>>=
+source(paste0(RootDir,"/code/model/B2SetPath.R"))
+
+project_location<-"Exeter"
+nregs<-11
+regnames<-data.frame(region_id=seq(1:nregs), 
+                     region_str=c("CaMKOx", "CornwallDevon", 
+                                  "EastMid", "EastEng", 
+                                  "London", "NE", "NW", 
+                                  "SE", "SW", "WestMid", 
+                                  "YorkshireHumber"),
+                     name=c("Cambridge, Milton Keynes, and Oxford",
+                            "Cornwall and Devon",
+                            "East Midlands",
+                            "East of England",
+                            "London","North East",
+                            "North West","South East",
+                            "South West","West Midlands",
+                            "Yorkshire and the Humber"))
+region_map_index<-c(3,9,4,6,7,1,2,8,9,5,3)
+
+project_id          <- 1
+r                   <- 2
+infrastructure_type <- "settlement"   # c("rail","road","settlement")
+dirs<-B2SetPath(RootDir,region_id)
+
+# Names of files in NewDataDir
+files<-list.files(dirs$newdatadir)
+settlementfile<-files[1]
+
+@
+
+
+
+\title{Region:   \Sexpr{regnames$name[r]} \\
+       Project ID:   project \Sexpr{project_id} \\
+       Impact of new \Sexpr{infrastructure_type} near \Sexpr{project_location} }
+\author{IFS Property Value Calculator}
+\date{}           
+
+
+\begin{document}
+\maketitle
+
+
+
+\end{document}

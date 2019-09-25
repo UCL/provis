@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<!-- saved from url=(0035)http://www.nickeubank.com/gis-in-r/ -->
+<html lang="en-US" prefix="og: http://ogp.me/ns#"><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	
+	<meta name="viewport" content="width=device-width">
+	<title>GIS in R - Nick Eubank</title>
+	<link rel="profile" href="http://gmpg.org/xfn/11">
+	<link rel="pingback" href="http://www.nickeubank.com/xmlrpc.php">
+	<!--[if lt IE 9]>
+	<script src="http://www.nickeubank.com/wp-content/themes/twentythirteen/js/html5.js"></script>
+	<![endif]-->
+	
+<!-- This site is optimized with the Yoast SEO plugin v4.4 - https://yoast.com/wordpress/plugins/seo/ -->
+<link rel="canonical" href="http://www.nickeubank.com/gis-in-r/">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GIS in R - Nick Eubank">
+<meta property="og:description" content="R has a full library of tools for working with spatial data. This includes tools for both vector and raster data, as well as interfacing with data from other sources (like ArcGIS) and making maps. These tutorials — which build off Claudia Engel’s excellent GIS in R tutorials — are designed for users with some familiarity … Continue reading GIS in R →">
+<meta property="og:url" content="http://www.nickeubank.com/gis-in-r/">
+<meta property="og:site_name" content="Nick Eubank">
+<meta property="og:image" content="https://i.creativecommons.org/l/by-sa/4.0/88x31.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="R has a full library of tools for working with spatial data. This includes tools for both vector and raster data, as well as interfacing with data from other sources (like ArcGIS) and making maps. These tutorials — which build off Claudia Engel’s excellent GIS in R tutorials — are designed for users with some familiarity … Continue reading GIS in R →">
+<meta name="twitter:title" content="GIS in R - Nick Eubank">
+<meta name="twitter:image" content="https://i.creativecommons.org/l/by-sa/4.0/88x31.png">
+<!-- / Yoast SEO plugin. -->
+
+<link rel="dns-prefetch" href="http://fonts.googleapis.com/">
+<link rel="dns-prefetch" href="http://s.w.org/">
+<link href="https://fonts.gstatic.com/" crossorigin="" rel="preconnect">
+<link rel="alternate" type="application/rss+xml" title="Nick Eubank » Feed" href="http://www.nickeubank.com/feed/">
+		<script async="" src="./GIS in R - Nick Eubank_files/analytics.js"></script><script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/2.2.1\/svg\/","svgExt":".svg","source":{"concatemoji":"http:\/\/www.nickeubank.com\/wp-includes\/js\/wp-emoji-release.min.js?ver=4.7.5"}};
+			!function(a,b,c){function d(a){var b,c,d,e,f=String.fromCharCode;if(!k||!k.fillText)return!1;switch(k.clearRect(0,0,j.width,j.height),k.textBaseline="top",k.font="600 32px Arial",a){case"flag":return k.fillText(f(55356,56826,55356,56819),0,0),!(j.toDataURL().length<3e3)&&(k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,65039,8205,55356,57096),0,0),b=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55356,57331,55356,57096),0,0),c=j.toDataURL(),b!==c);case"emoji4":return k.fillText(f(55357,56425,55356,57341,8205,55357,56507),0,0),d=j.toDataURL(),k.clearRect(0,0,j.width,j.height),k.fillText(f(55357,56425,55356,57341,55357,56507),0,0),e=j.toDataURL(),d!==e}return!1}function e(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var f,g,h,i,j=b.createElement("canvas"),k=j.getContext&&j.getContext("2d");for(i=Array("flag","emoji4"),c.supports={everything:!0,everythingExceptFlag:!0},h=0;h<i.length;h++)c.supports[i[h]]=d(i[h]),c.supports.everything=c.supports.everything&&c.supports[i[h]],"flag"!==i[h]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[i[h]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(g=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",g,!1),a.addEventListener("load",g,!1)):(a.attachEvent("onload",g),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),f=c.source||{},f.concatemoji?e(f.concatemoji):f.wpemoji&&f.twemoji&&(e(f.twemoji),e(f.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+<link rel="stylesheet" id="wp-syntax-css-css" href="./GIS in R - Nick Eubank_files/wp-syntax.css" type="text/css" media="all">
+<link rel="stylesheet" id="twentythirteen-fonts-css" href="./GIS in R - Nick Eubank_files/css" type="text/css" media="all">
+<link rel="stylesheet" id="genericons-css" href="./GIS in R - Nick Eubank_files/genericons.css" type="text/css" media="all">
+<link rel="stylesheet" id="twentythirteen-style-css" href="./GIS in R - Nick Eubank_files/style.css" type="text/css" media="all">
+<!--[if lt IE 9]>
+<link rel='stylesheet' id='twentythirteen-ie-css'  href='http://www.nickeubank.com/wp-content/themes/twentythirteen/css/ie.css?ver=2013-07-18' type='text/css' media='all' />
+<![endif]-->
+<script type="text/javascript" src="./GIS in R - Nick Eubank_files/jquery.js"></script>
+<script type="text/javascript" src="./GIS in R - Nick Eubank_files/jquery-migrate.min.js"></script>
+<link rel="https://api.w.org/" href="http://www.nickeubank.com/wp-json/">
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.nickeubank.com/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.nickeubank.com/wp-includes/wlwmanifest.xml"> 
+<meta name="generator" content="WordPress 4.7.5">
+<link rel="shortlink" href="http://www.nickeubank.com/?p=76">
+<link rel="alternate" type="application/json+oembed" href="http://www.nickeubank.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.nickeubank.com%2Fgis-in-r%2F">
+<link rel="alternate" type="text/xml+oembed" href="http://www.nickeubank.com/wp-json/oembed/1.0/embed?url=http%3A%2F%2Fwww.nickeubank.com%2Fgis-in-r%2F&amp;format=xml">
+	<style type="text/css" id="twentythirteen-header-css">
+			.site-header {
+			background: url(http://www.nickeubank.com/wp-content/themes/twentythirteen/images/headers/circle.png) no-repeat scroll top;
+			background-size: 1600px auto;
+		}
+		@media (max-width: 767px) {
+			.site-header {
+				background-size: 768px auto;
+			}
+		}
+		@media (max-width: 359px) {
+			.site-header {
+				background-size: 360px auto;
+			}
+		}
+		</style>
+	
+<!-- BEGIN GADWP v4.9.6.2 Universal Tracking - https://deconf.com/google-analytics-dashboard-wordpress/ -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-57413392-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+<!-- END GADWP Universal Tracking -->
+
+</head>
+
+<body class="page-template-default page page-id-76 single-author">
+	<div id="page" class="hfeed site">
+		<header id="masthead" class="site-header" role="banner">
+			<a class="home-link" href="http://www.nickeubank.com/" title="Nick Eubank" rel="home">
+				<h1 class="site-title">Nick Eubank</h1>
+				<h2 class="site-description">Post-Doctoral Fellow in Political Science</h2>
+			</a>
+
+			<div id="navbar" class="navbar">
+				<nav id="site-navigation" class="navigation main-navigation" role="navigation">
+					<button class="menu-toggle">Menu</button>
+					<a class="screen-reader-text skip-link" href="http://www.nickeubank.com/gis-in-r/#content" title="Skip to content">Skip to content</a>
+					<div class="menu-main-menu-container"><ul id="primary-menu" class="nav-menu"><li id="menu-item-43" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-home menu-item-43"><a href="http://www.nickeubank.com/">Home</a></li>
+<li id="menu-item-58" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-58"><a href="http://www.nickeubank.com/academic-publicationsz/">Research</a></li>
+<li id="menu-item-46" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-46"><a href="http://www.nickeubank.com/non-academic-publications/">Non-Academic Publications</a></li>
+<li id="menu-item-216" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-216"><a href="http://www.nickeubank.com/replication/">Replication / Code Integrity</a></li>
+<li id="menu-item-47" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-47"><a href="http://www.nickeubank.com/data-and-resources/">Data and Code</a></li>
+<li id="menu-item-90" class="menu-item menu-item-type-post_type menu-item-object-page current-menu-item page_item page-item-76 current_page_item menu-item-90"><a href="http://www.nickeubank.com/gis-in-r/">GIS in R</a></li>
+<li id="menu-item-148" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-148"><a href="http://www.nickeubank.com/teaching/">Teaching</a></li>
+<li id="menu-item-61" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-61"><a href="http://www.nickeubank.com/cv-and-contact-info/">About Me</a></li>
+</ul></div>					<form role="search" method="get" class="search-form" action="http://www.nickeubank.com/">
+				<label>
+					<span class="screen-reader-text">Search for:</span>
+					<input type="search" class="search-field" placeholder="Search …" value="" name="s">
+				</label>
+				<input type="submit" class="search-submit" value="Search">
+			</form>				</nav><!-- #site-navigation -->
+			</div><!-- #navbar -->
+		</header><!-- #masthead -->
+
+		<div id="main" class="site-main">
+
+	<div id="primary" class="content-area">
+		<div id="content" class="site-content" role="main">
+
+						
+				<article id="post-76" class="post-76 page type-page status-publish hentry">
+					<header class="entry-header">
+						
+						<h1 class="entry-title">GIS in R</h1>
+					</header><!-- .entry-header -->
+
+					<div class="entry-content">
+						<p>R has a full library of tools for working with spatial data. This includes tools for&nbsp;both vector and raster data, as well as interfacing with data from other sources (like ArcGIS) and making maps.</p>
+<p>These tutorials — which build off <a href="http://web.stanford.edu/~cengel/" target="_blank" rel="noopener noreferrer">Claudia Engel’s</a> excellent <a href="http://www.rpubs.com/cengel248" target="_blank" rel="noopener noreferrer">GIS in R tutorials</a> — are designed for users with some familiarity with R, but require no knowledge of spatial analysis. If you aren’t used to working with R, you will probably want to spend some little time familiarizing yourself with the language before starting this series. (<a href="http://stanford.edu/~ejdemyr/#teaching" target="_blank" rel="noopener noreferrer">Here’s a good set of R tutorials if you need them</a>)</p>
+<p>Each tutorial is divided into several parts (to be done in sequence), and include a zipped folder of data for exercises. &nbsp;In addition, cheatsheets are provided which may be of help in remembering the various commands you will frequently use. Each tutorial is meant to take ~1.5 hours, not including software installation.</p>
+<p>These tutorials have a share-and-share-alike Creative&nbsp;Commons license, so please feel free to use and modify as you see fit. You can find rmarkdown source files <a href="http://www.github.com/nickeubank/gis_in_r" target="_blank" rel="noopener noreferrer">on github here.</a></p>
+<p><b>Command Cheatsheets:</b></p>
+<p>Learning GIS in R involves learning both concepts and vocabulary. Here are some cheatsheets to help with the later.</p>
+<ul>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/gis_in_r_vector_cheatsheet.pdf">Vector Data Cheatsheet</a></li>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/gis_in_r_raster_cheatsheet.pdf">Raster Data Cheatsheet</a></li>
+<li><a href="http://www.maths.lancs.ac.uk/~rowlings/Teaching/UseR2012/cheatsheet.html" target="_blank" rel="noopener noreferrer">Third-party (but great) cheatsheet</a></li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Tutorial 1: Introduction to Data Types</strong></p>
+<p>The aim of Tutorial 1&nbsp;is to provide users with a solid understanding of how R things about spatial data. It covers some material that users will not need to deal with on a day to day basis, but by providing an&nbsp;understanding of the organization of each library, it is my hope they will help users avoid problems, solve problems when they arise, and to know how to identify the sources of problems when they need to ask others for guidance.</p>
+<ul>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS1_SpatialDataTypes_part0_setup.html" target="_BLANK">Part 1.0: Setup Instruction</a></li>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS1_SpatialDataTypes_part1_vectorData.html" target="_BLANK">Part 1.1: Vector Data in R</a></li>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS1_SpatialDataTypes_part2_rasterData.html" target="_BLANK">Part 1.2: Raster Data in R</a></li>
+</ul>
+<p><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS1_Data.zip">Data for Tutorial 1</a></p>
+<p>&nbsp;</p>
+<p><strong>Tutorial 2: Combining Multiple Data Sources</strong></p>
+<p>Rarely can the answers we seek be found in a single data-set. Here are a set of tools for combining multiple datasets through methods like spatial joins, distance calculations, etc.</p>
+<ul>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS2_MergingSpatialData_part0_setup.html" target="_BLANK">Part 2.0: Setup</a></li>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS2_MergingSpatialData_part1_Joins.html" target="_BLANK">Part 2.1: Spatial Joins</a></li>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/lapply_and_sapply.pdf">Supplementary Doc on lapply and sapply</a></li>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS2_MergingSpatialData_part2_GeometricManipulations.html" target="_BLANK">Part 2.2: Geometric Manipulations: Buffers, Distances, Intersections, etc.</a></li>
+</ul>
+<p><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS2_Data.zip">Data for Tutorial 2</a></p>
+<p>&nbsp;</p>
+<p><strong>Tutorial 3: Making Maps</strong></p>
+<p>Visualization is central to sharing our results. This tutorial covers the basics of making visually appealing and informative maps in R.</p>
+<ul>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS3_MakingMaps_part1_mappingVectorData.html" target="_BLANK">3.1 Making Maps from Vector Data</a></li>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS3_MakingMaps_part2_mappingRasterData.html" target="_BLANK">3.2 Making Maps from Raster Data</a></li>
+</ul>
+<p><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS3_Data.zip">Data for Tutorial 3</a></p>
+<p><strong>Tutorial 4: Geocoding (Very Short) and Background on APIs</strong></p>
+<p>How to convert addresses and location names to latitudes and longitudes from R using the Google Maps API. Also some optional background on what an API is, and how most web APIs work.</p>
+<ul>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS4_geocoding.html" target="_blank" rel="noopener noreferrer">4 Geocoding with the Google Maps API</a></li>
+</ul>
+<p><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS4_Data.zip" target="_blank" rel="noopener noreferrer">Data for Tutorial 4</a></p>
+<p>&nbsp;</p>
+<p><strong>Tutorial 5: Spatial Statistics and Surface Interpolation</strong></p>
+<p>Libraries for spatial statistics like Ripley’s K, Moran’s I, Spatial Auto-Regressive &nbsp;Lag regressions, Error Auto-Regressive regressions, etc, as well as libraries for surface interpolation via IDW and Kriging.</p>
+<ul>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/11/RGIS5_spatialstatistics.html" target="_blank" rel="noopener noreferrer">5 Spatial Statistics and Surface Interpolation</a></li>
+</ul>
+<p><a href="http://www.nickeubank.com/wp-content/uploads/2015/11/RGIS5_Data.zip" target="_blank" rel="noopener noreferrer">Data for Tutorial 5</a></p>
+<p><strong>Tutorial 6:&nbsp;</strong><strong>Combining Network Analysis with GIS</strong></p>
+<p>This tutorial introduces network analysis concepts, and provides an overview of how to combine a specific type of network analysis — community detection — with GIS to visualize community structures in space.</p>
+<ul>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS6_networkanalysis.html" target="_blank" rel="noopener noreferrer">6 Network Analysis and GIS</a></li>
+</ul>
+<p><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS6_Data.zip">Data for Tutorial 6</a></p>
+<p><strong>Tutorial 7: Need more performance?</strong></p>
+<p>A brief overview of some tools for getting better performance. For example, tutorial includes an example of how to find the nearest neighbor in one DataFrame for each observation in a second DataFrame&nbsp;<em>without</em> calculating every single distance and taking the minimum.</p>
+<ul>
+<li><a href="http://www.nickeubank.com/wp-content/uploads/2015/10/RGIS7_speedingupgis.html" target="_blank" rel="noopener noreferrer">7 Speeding Up GIS</a></li>
+</ul>
+<p><strong>Other Resources by Other People:</strong></p>
+<ul>
+<li><a href="http://stanford.edu/~ejdemyr/r-tutorials/measuring-segregation.html" target="_blank" rel="noopener noreferrer">Great tutorial on measuring spatial segregation in R</a></li>
+</ul>
+<p>&nbsp;</p>
+<p><a href="http://creativecommons.org/licenses/by-sa/4.0/" rel="license"><img style="border-width: 0;" src="./GIS in R - Nick Eubank_files/88x31.png" alt="Creative Commons License"></a><br>
+This work is licensed under a <a href="http://creativecommons.org/licenses/by-sa/4.0/" rel="license">Creative Commons Attribution-ShareAlike 4.0 International License</a>.</p>
+											</div><!-- .entry-content -->
+
+					<footer class="entry-meta">
+											</footer><!-- .entry-meta -->
+				</article><!-- #post -->
+
+							
+		</div><!-- #content -->
+	</div><!-- #primary -->
+
+
+		</div><!-- #main -->
+		<footer id="colophon" class="site-footer" role="contentinfo">
+			
+			<div class="site-info">
+								<a href="https://wordpress.org/">Proudly powered by WordPress</a>
+			</div><!-- .site-info -->
+		</footer><!-- #colophon -->
+	</div><!-- #page -->
+
+	<script type="text/javascript" src="./GIS in R - Nick Eubank_files/wp-syntax.js"></script>
+<script type="text/javascript" src="./GIS in R - Nick Eubank_files/functions.js"></script>
+<script type="text/javascript" src="./GIS in R - Nick Eubank_files/wp-embed.min.js"></script>
+
+</body></html>

@@ -1,0 +1,24 @@
+1) add regional farm prices
+2) add option to build on urban land
+3) think about travel times and more destinations
+4) add (roads, rivers, towns, schools,airports )
+5) new rail project
+6) RICS
+7) fix reports
+8) download new data
+9) road + houses
+10) road + rail
+11) EPC rating in equation 1
+12) VOA
+13) write-up
+14) random forests
+15) caveats
+16) user options
+    a) enter land costs
+    b) multiple roads as lines
+17) gravity model of prices    
+18) model impact of a project that interesects 2 regions
+19) create regional aroad files so that don't have to load all aroads
+
+formatting
+1) but box around map in figure
