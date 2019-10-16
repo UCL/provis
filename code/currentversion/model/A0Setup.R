@@ -1,24 +1,25 @@
 host<-system("hostname",intern=TRUE)
-#browser()
 if (host=="dh-230-mac.econ.ucl.ac.uk") {
-  RootDir<-"/Users/uctpln0/Documents/research/hedonic/NIC"
+  RootDir<-"/Users/uctpln0/Documents/research/IO-GIT/provis"
+  DataRoot<-"/Users/uctpln0/Documents/research/hedonic/NIC"
 } else if (host=="rserver.econ.ucl.ac.uk") {
   RootDir<-"/srv/shiny-server"
+  DataRoot <- "/srv/shiny-server"
 } else if (host=="minelava") {
-  RootDir<-"C:/a/research/hedonic/NIC"
+  RootDir<-"C:/a/research/IO-GIT/provis"
+  DataRoot<-"C:/a/research/hedonic/NIC"
 } else if (host=="DH-G06-03") {
   RootDir<-"U:/NICProject"
-} else if (host=="jake.local" | host=="vic.local") {
-  RootDir<-"/home/uctpln0/hedonic/NIC"
-} else if (host=="polly's house") {
-  RootDir<-"C:/.../NIC"
+  DataRoot<-"U:/NICProject"
 } else {
   info_sys<-Sys.info()
   user<-info_sys["user"]
   if (user=="uctpln0") {
-    RootDir<-"/home/uctpln0/hedonic/NIC"
+    RootDir<-"/home/uctpln0/IO-GIT/provis"
+    DataRoot <- "/home/uctpln0/hedonic/NIC"
   } else {
-    RootDir<-"/Users/larsnesheim/Documents/research/hedonic/NIC"
+    RootDir<-"/Users/larsnesheim/Documents/research/IO-GIT/provis"
+    DataRoot <-"/Users/larsnesheim/Documents/research/hedonic/NIC"
   }
 }
 CodeDir<-paste0(RootDir,"/code/currentversion")

@@ -202,7 +202,6 @@ A2Model2_newvariables<-function(m2data,dest,region_polygon,region,dirs,drop_outl
   }
   # 6) Distance to nationalpark
   #    omit for London and CAMKOX
-#  browser()
   if (region!=1 & region!=5) {
     distance<-FindNearestPark(m2data[,c("longitude","latitude")],
                               region_polygon,parktype="natpark",region,dirs,basis)
@@ -235,8 +234,8 @@ A2Model2_newvariables<-function(m2data,dest,region_polygon,region,dirs,drop_outl
 
   # 9) Find nearest station and compute travel time
   newdata<-FindNearestStation(as.matrix(m2data[,c("longitude","latitude")]),
-                              region,RootDir,dirs$traveldir,basis,stationtype="rail")
-  newdata<-FindNearestStation(as.matrix(m2data[,c("longitude","latitude")]),region,RootDir,dirs$traveldir,basis,stationtype="rail")
+                              region,dirs,basis,stationtype="rail")
+  newdata<-FindNearestStation(as.matrix(m2data[,c("longitude","latitude")]),region,dirs,basis,stationtype="rail")
   
   m2data$station_lon<-newdata$station_lon
   m2data$station_lat<-newdata$station_lat
@@ -248,7 +247,7 @@ A2Model2_newvariables<-function(m2data,dest,region_polygon,region,dirs,drop_outl
   # distance to tube station for london
   if (region==5) {
     newdata<-FindNearestStation(as.matrix(m2data[,c("longitude","latitude")]),
-                                region,RootDir,dirs$traveldir,basis,stationtype="tube")
+                                region,dirs,basis,stationtype="tube")
     m2data$tubestation_lon<-newdata$tubestation_lon
     m2data$tubestation_lat<-newdata$tubestation_lat
     m2data$distance_tubestation<-newdata$distance_tubestation

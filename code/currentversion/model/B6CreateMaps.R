@@ -23,7 +23,7 @@ uk_bbx <- readWKT("POLYGON((-7.5600 49.9600, 1.7800 49.9600, 1.7800 60.8400, -7.
 
 # MAP 1:  Plot the regions in color with a legend
 region_id<-0
-dirs<-B2SetPath(RootDir,CodeDir,region_id)
+dirs<-B2SetPath(RootDir,CodeDir,DataRoot,region_id)
 
 regions<-B5LoadRegions(dirs)
 nregions<-nrow(regions@data)
@@ -46,7 +46,7 @@ nregs<-11
 regnames$ONS <- c(6,9,4,6,7,1,2,8,9,5,3)
                   
 for (r in 1:nregs) {
-  dirs<-B2SetPath(RootDir,CodeDir,r)
+  dirs<-B2SetPath(RootDir,CodeDir,DataRoot,r)
   DestinationFile<-paste0(dirs$datadir,"/destinations",r,".csv")
   dest<-read.csv(DestinationFile)  
   dest<-dest[dest$shortlist,]

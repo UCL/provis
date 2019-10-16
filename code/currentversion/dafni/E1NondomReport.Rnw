@@ -74,7 +74,7 @@ popdensity   <- parms$popdensity
 model_laname <- parms$la_model
 mapfile      <- parms$mapfile
 region_id    <- parms$region_id
-dirs         <- B2SetPath(RootDir,CodeDir,region_id,datastub=datastub)
+dirs         <- B2SetPath(RootDir,CodeDir,DataRoot,region_id,datastub=datastub)
 travelmodelbasis <- parms$travelmodelbasis
 
 price_per_acre <- c(7727,9888,18038) # from 2017 RICS

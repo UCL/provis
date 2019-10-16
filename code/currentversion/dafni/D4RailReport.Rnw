@@ -74,7 +74,7 @@ depvar      <- "logvalue"  # one of c("logvalue","value","boxcoxvalue")
 avgtimeflag <- 1  # 1 = average time. 0 = (drive_time,trans_time)
 
 region_str      <- as.character(regnames$region_str[region_id]) 
-dirs            <- B2SetPath(RootDir,CodeDir,region_id)
+dirs            <- B2SetPath(RootDir,CodeDir,DataRoot,region_id)
 DestinationFile <- paste0(dirs$datadir,"/destinations",region_id,".csv")
 
 dest  <- read.csv(DestinationFile)  

@@ -1,27 +1,23 @@
 #' Find nearest station to houses and compute travel time
 #' @param houses     (n x 2) matrix of coordinates (longitude,latitude)
 #' @param region_id  index for region
-#' @param RootDir    directory name of root directory
-#' @param TravelDir  directory name of travel model directory
+#' @param dirs       list of directory names
 #' @param basis      c("glp","tensor","cheb") basis for travel time model
 #' @return newdata   dataframe with (station_lon,station_lat,distance_station,drive_station)
 #' @export
 #' @examples
 #' houses    <- as.matrix(m2data[,c("longitude","latitude")])
 #' region_id <- 1
-#' RootDir   <- "/Users/hedonic/NIC"
-#' TravelDir <- paste0(RootDir,"/output/TravelDir")
-#' newdata<-FindNearestStation(houses,region_id,RootDir,TravelDir)
-FindNearestStation<-function(houses,region_id,RootDir,TravelDir,basis="glp",stationtype="rail") {
+#' newdata<-FindNearestStation(houses,region_id,dirs)
+FindNearestStation<-function(houses,region_id,dirs,basis="glp",stationtype="rail") {
 #  require(rgdal)
 #  require(rgeos)
 #  require(FNN)
   # names of directories and files
-  mapdir<-paste0(RootDir,"/data/maps")
   if (stationtype=="rail") {
-    stationfile<-paste0(RootDir,"/data/rail/estimates-of-station-usage-2016-17.csv")
+    stationfile<-paste0(dirs$raildir,"/estimates-of-station-usage-2016-17.csv")
   } else if (stationtype=="tube") {
-    stationfile<-paste0(RootDir,"/data/rail/tube_stations.csv")
+    stationfile<-paste0(dirs$raildir,"/tube_stations.csv")
   }
 
   # coordinates
@@ -92,7 +88,7 @@ FindNearestStation<-function(houses,region_id,RootDir,TravelDir,basis="glp",stat
   distance_station <- get.knnx(coordinates(stations_proj),coordinates(houses_proj),k=1)
   newdata<-data.frame(coordinates(houses),
                       stations_region@coords[distance_station$nn.index,1:2])
-  traveltime<-predictTravelTime2(newdata,destname = "station",region_id,TravelDir,
+  traveltime<-predictTravelTime2(newdata,destname = "station",region_id,dirs$traveldir,
                                  printstr="station",basis=basis)
 
   newdata<-cbind(newdata[,3:4],distance_station$nn.dist/1000,

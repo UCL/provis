@@ -57,7 +57,7 @@ for (r in 3:3) {
 
   region_id<-regnames$region_id[r]    
   region_str<-regnames$region_str[r] 
-  dirs<-B2SetPath(RootDir,CodeDir,region_id,datastub)
+  dirs<-B2SetPath(RootDir,CodeDir,DataRoot,region_id,datastub)
 
   # Drop data prior to StartDate
   StartDate<-as.Date("2008-01-01")

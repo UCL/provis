@@ -25,7 +25,7 @@ ukgrid = "+init=epsg:27700"
 for (r in 1:11) {
   region_id<-regnames$region_id[r]    
   region_str<-as.character(regnames$region_str[r]) 
-  dirs<-B2SetPath(RootDir,CodeDir,region_id,datastub)
+  dirs<-B2SetPath(RootDir,CodeDir,DataRoot,region_id,datastub)
   #-----------------------------------------------------------------
   #   Load and clean data
   #-----------------------------------------------------------------

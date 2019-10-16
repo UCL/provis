@@ -25,7 +25,7 @@ FindNearestPark<-function(houses,region_polygon,parktype="AONB",region_id,dirs,b
     parklayer <- ogrListLayers(dirs$AONBdir)
     park <- readOGR(dsn=dirs$AONBdir,layer=parklayer[[1]])
   }  else if (parktype=="natpark") {
-    parkfile<-paste0(dirs$rootdir,"/data/nationalparks/National_Parks_England.kml")
+    parkfile<-paste0(dirs$parkdir,"/National_Parks_England.kml")
     parklayer<-ogrListLayers(parkfile)
     park<-readOGR(parkfile,layer=parklayer)
   }

@@ -162,7 +162,7 @@ stargazer(m2$region7,m2$region8,m2$region9,m2$region10,m2$region11,
 m2data3<-vector("list",nregions)
 
 r<-1
-dirs<-B2SetPath(RootDir,CodeDir,r,datastub)
+dirs<-B2SetPath(RootDir,CodeDir,DataRoot,r,datastub)
 # Load data
 load(file=paste0(dirs$datadir,"/m2data2.RData"))
 var1<-depvar
@@ -200,7 +200,7 @@ rnames<-rep(NA,sum(nvars1))
 colnames(sumstats)<-as.character(regions[,2])
 
 for (r in c(1:11)) {
-  dirs<-B2SetPath(RootDir,CodeDir,r,datastub)
+  dirs<-B2SetPath(RootDir,CodeDir,DataRoot,r,datastub)
   # Load data
   load(file=paste0(dirs$datadir,"/m2data2.RData"))
   if (datastub=="m11") {
@@ -247,7 +247,7 @@ stargazer(sumstats[,7:11],
 # Table of destinations for each region
 destlist  <- matrix(character(nregions*25),25,nregions)
 for (r in 1:11) {
-  dirs<-B2SetPath(RootDir,CodeDir,r)
+  dirs<-B2SetPath(RootDir,CodeDir,DataRoot,r)
   DestinationFile<-paste0(dirs$datadir,"/destinations",r,".csv")
   dest<-read.csv(DestinationFile)
   dest<-as.character(dest[dest$shortlist,1])

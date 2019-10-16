@@ -30,12 +30,12 @@ if (input$investType=="settlement") {
   input$popdensity         <- 35                               # options in range: 20 - 70
 
   # User selects model LA
-  load(paste0(RootDir,"/data/region_la_list.RData"))
-  laOptions <- region_la_list[[region$id]]
+  load(paste0(DataRoot,"/data/region_la_list.RData"))
+  laOptions <- region_la_list[[input$regionID]]
   # display:   "Choose local authority to be used as statistical model."
   # user chooses i1 from list on line 105
   input$i1       <- 1                  # user chooses element from laOptions
-  input$laModel <- laOptions[i1]
+  input$laModel <- laOptions[input$i1]
   
 } else if (input$investType=="road") {
   # Step 3B: user chooses road investment details

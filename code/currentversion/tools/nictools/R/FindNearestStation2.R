@@ -1,25 +1,23 @@
 #' Find nearest station to houses and distance
 #' @param houses     (n x 2) matrix of coordinates (longitude,latitude)
 #' @param region_id  index for region
-#' @param RootDir    directory name of root directory
+#' @param dirs       list of directory names
 #' @return newdata   dataframe with (station_lon,station_lat,distance_station,drive_station)
 #' @export
 #' @examples
 #' houses    <- as.matrix(m2data[,c("longitude","latitude")])
 #' region_id <- 1
-#' RootDir   <- "/Users/hedonic/NIC"
-#' newdata<-FindNearestStation(houses,region_id,RootDir)
-FindNearestStation2<-function(houses,region_id,RootDir,stationtype="rail") {
+#' newdata<-FindNearestStation(houses,region_id,dirs)
+FindNearestStation2<-function(houses,region_id,dirs,stationtype="rail") {
 #  require(rgdal)
 #  require(rgeos)
 #  require(FNN)
 
   # names of directories and files
-  mapdir<-paste0(RootDir,"/data/maps")
   if (stationtype=="rail") {
-    stationfile<-paste0(RootDir,"/data/rail/estimates-of-station-usage-2016-17.csv")
+    stationfile<-paste0(dirs$raildir,"/estimates-of-station-usage-2016-17.csv")
   } else if (stationtype=="tube") {
-    stationfile<-paste0(RootDir,"/data/rail/tube_stations.csv")
+    stationfile<-paste0(dirs$raildir,"/tube_stations.csv")
   }
 
   # coordinates

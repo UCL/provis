@@ -21,7 +21,7 @@ regnames<-data.frame(region_id=seq(1:nregs),
 for (r in 1:11) {
   region_id<-regnames$region_id[r]    
   region_str<-as.character(regnames$region_str[r]) 
-  dirs<-B2SetPath(RootDir,CodeDir,region_id,datastub)
+  dirs<-B2SetPath(RootDir,CodeDir,DataRoot,region_id,datastub)
   
   # Load data
   load(file=paste0(dirs$datadir,"/m2data2.RData"))
