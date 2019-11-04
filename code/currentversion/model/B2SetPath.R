@@ -30,7 +30,7 @@ B2SetPath<-function(RootDir,CodeDir,DataRoot,region_id=0,datastub="m11") {
   }
   MapDir<-paste0(DataRoot,"/data/maps")
 
-  TravelDir<-paste0(DataRoot,"/data/TravelTime/results")
+  TravelDir<-paste0(CodeDir,"/TravelTime/results")
   if (region_id>0 & datastub=="m11") {
     OutDir<-paste0(CodeDir,"/output/region",as.character(region_id))
   } else if (region_id>0 & datastub=="nondom") {
