@@ -21,10 +21,6 @@ plotflag<-2     # 0 do not plot
                 # 1 plot to screen then save
                 # 2 plot directly to file, no screen created
 allDatastubs <- c("m11","nondom")
-dataflag<-1
-if (datastub=="nondom") {
-   dataflag<-2
-}
 
 boxcoxflag <- 1 # 0 = estimate (linear,log)
                 # 1 = estimate (linear,log,boxcox)
@@ -76,8 +72,11 @@ uk_bbx <- readWKT("POLYGON((-7.5600 49.9600, 1.7800 49.9600, 1.7800 60.8400, -7.
 
 for (ds in 1:2) {
   datastub <- allDatastubs[ds]
-  browser()
-for (r in 1:1) {
+  dataflag<-1
+  if (datastub=="nondom") {
+    dataflag<-2
+  }
+for (r in 1:11) {
   region_id<-regnames$region_id[r]    
   region_str<-regnames$region_str[r] 
   dirs<-B2SetPath(RootDir,CodeDir,DataRoot,region_id,datastub)
@@ -99,7 +98,6 @@ for (r in 1:1) {
   if (googlePremium) {
     #devtools::install_github("dkahle/ggmap")
     library(ggmap)
-    #ggmap_credentials()
     #register_google(key = "SECRET KEY", account_type = "standard", day_limit = 10000)
   }
   m1data<-GetTownNames(m1data)
