@@ -2,8 +2,8 @@ library(knitr)
 source("A0Setup.R")
 
 input            <-list()
-input$regionID   <- 2              # region id number:  options = list(1:11)
-input$investType <- "settlement"   # investment type:   options = list("settlement","road","rail")
+input$regionID   <- 1              # region id number:  options = list(1:11)
+input$investType <- "road"         # investment type:   options = list("settlement","road","rail")
 input$projectId  <- 1              # project id number
 
 # Step 1: users chooses region

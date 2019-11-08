@@ -1,9 +1,11 @@
 # Model 2:  Create estimation sample
 # Author:   MM,LN
-# Version:  2018.10.10
+# Version:  2019.11.08
+# Revision history
+# 2019.11.08   Add loop over values of datastub. produce results for both m11 and nondom.
 
-datastub<-"nondom"  # "m11"    = domestic
-                    # "nondom" = non-domestic
+allDatastubs <- c("m11","nondom")  # "m11"    = domestic
+                                   # "nondom" = non-domestic
 travelmodelbasis<-"cheb"  # c("cheb","glp","tensor")  basis for travel model
 
 LondonFlag<-0   # 0 : Only Greater London
@@ -22,6 +24,8 @@ regnames<-data.frame(region_id=seq(1:nregs),
 wgs.84    <- '+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0'
 ukgrid = "+init=epsg:27700"
 
+for (ds in 1:2) {
+  datastub <- allDataStubs[ds]
 for (r in 1:11) {
   region_id<-regnames$region_id[r]    
   region_str<-as.character(regnames$region_str[r]) 
@@ -96,4 +100,5 @@ for (r in 1:11) {
 
 save(m2data,file=paste0(dirs$datadir,"/m2data2.RData"))
 
-}
+}  # loop over regions
+}  # loop over c("domestic","nondomestic") data

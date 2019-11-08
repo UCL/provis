@@ -1,11 +1,13 @@
 # Estimate model 2
 # Author:  MM,LN
-# Version: 2018.10.10
+# Version: 2019.11.08
+# Revision history
+# 2011.11.08   Add loop over values of datastub, "m11" and "nondom".
 
 LondonFlag  <- 0     # 0 : Only Greater London
                      # 1 : London + some adjacent counties  
-datastub    <- "nondom" # "m11"   = domestic properties
-                        # "nondom" = non-domestic properties
+allDatastubs <- c("m11","nondom") # "m11"   = domestic properties
+                                  # "nondom" = non-domestic properties
 N0          <- 10000 # N0   = size of fullsample used for estimation
                      # N0   = 0 then use all data (excluding outliers)
 plotflag    <- 0     # 0 = no plots.  1 = plot on screen.  2 = plot to device
@@ -18,6 +20,8 @@ regnames<-data.frame(region_id=seq(1:nregs),
                                   "London", "NE", "NW", 
                                   "SE", "SW", "WestMid", 
                                   "YorkshireHumber"))
+for (ds in 1:2) {
+  datastub<-allDatastubs[ds]
 for (r in 1:11) {
   region_id<-regnames$region_id[r]    
   region_str<-as.character(regnames$region_str[r]) 
@@ -105,4 +109,4 @@ for (r in 1:11) {
     save(m2ols5,file=paste0(dirs$outdir,"/m2",y,"5.RData"))
   } # for (y in depvar)
 }  # for (r in 1:nregs) {
-  
+}  # loop over c("m11","nondom")  
